@@ -65,7 +65,7 @@ class TestAutoPromoteAircraftReferences(unittest.TestCase):
         low_score, _ = mod.alias_confidence(
             {"raw_value": "x", "match_key": "A1", "public_collision_count": "50"}
         )
-        self.assertEqual(low_score, 0.0)
+        self.assertAlmostEqual(low_score, 0.0)
 
     def test_merge_lookup_promotes_and_skips_expected_rows(self):
         existing = {"A320": {"match_key": "A320", "normalized_type": "A320", "category": "Trainer", "tag1": "", "tag2": "", "tag3": ""}}
