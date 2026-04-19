@@ -1,0 +1,2 @@
+# Run every Sunday at 03:15 local time
+15 3 * * 0 cd /path/to/workspace && /usr/bin/python3 sync_public_aircraft_sources.py --cache-dir cache/public_sources && /usr/bin/python3 weekly_update_pipeline.py --workspace . --normalizer normalize_aircraft_v5.py --alias-expander expand_aircraft_aliases_v2.py --seed-aliases aircraft_aliases.csv --seed-lookup aircraft_lookup_seed.csv --public-metadata cache/public_sources/opensky_aircraft_metadata_csv.csv --no-audit-cols >> logs/weekly_aircraft_update.log 2>&1
