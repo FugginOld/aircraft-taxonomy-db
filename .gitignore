@@ -8,3 +8,14 @@ james-planes-new-items.csv
 # IDE
 .vscode
 *.code-workspace
+
+# Generated pipeline artifacts (never committed)
+cache/public_sources/*.csv
+cache/public_sources/*.tsv
+cache/public_sources/*.pdf
+cache/public_sources/*.html
+cache/public_sources/manifest.json
+build/
+
+# Timestamped backup files produced by weekly_update_pipeline_v3.py
+*.bak

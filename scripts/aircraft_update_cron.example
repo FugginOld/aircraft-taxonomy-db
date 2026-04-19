@@ -1,2 +1,21 @@
-# Run every Sunday at 03:15 local time
-15 3 * * 0 cd /path/to/workspace && /usr/bin/python3 sync_public_aircraft_sources.py --cache-dir cache/public_sources && /usr/bin/python3 weekly_update_pipeline.py --workspace . --normalizer normalize_aircraft_v5.py --alias-expander expand_aircraft_aliases_v2.py --seed-aliases aircraft_aliases.csv --seed-lookup aircraft_lookup_seed.csv --public-metadata cache/public_sources/opensky_aircraft_metadata_csv.csv --no-audit-cols >> logs/weekly_aircraft_update.log 2>&1
+# Weekly aircraft taxonomy update — run every Sunday at 03:15 local time.
+#
+# All paths are relative to the repository root.
+# Taxonomy reference files live in taxonomy/.
+# Operational data lives in data/.
+# Public source cache lives in cache/public_sources/.
+# Build artifacts land in build/weekly_update/.
+#
+15 3 * * 0 cd /path/to/workspace && \
+  /usr/bin/python3 scripts/sync_public_aircraft_sources.py \
+    --cache-dir cache/public_sources && \
+  /usr/bin/python3 scripts/weekly_update_pipeline_v3.py \
+    --workspace . \
+    --normalizer scripts/normalize_aircraft_v5.py \
+    --alias-expander scripts/expand_aircraft_aliases_v2.py \
+    --validator scripts/validate_aircraft_references.py \
+    --promoter scripts/auto_promote_aircraft_references.py \
+    --seed-aliases taxonomy/aircraft_aliases.csv \
+    --seed-lookup taxonomy/aircraft_lookup_seed.csv \
+    --no-audit-cols \
+    >> logs/weekly_aircraft_update.log 2>&1

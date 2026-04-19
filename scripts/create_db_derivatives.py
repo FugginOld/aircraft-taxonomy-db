@@ -13,10 +13,10 @@ logging.basicConfig(
 
 if __name__ == "__main__":
     logging.info("Reading the main csv file...")
-    unsort_df = pd.read_csv("plane-alert-db.csv")
+    unsort_df = pd.read_csv("data/plane-alert-db.csv")
     df = unsort_df.sort_values(by=["$ICAO"], ascending=True)
     df.to_csv(
-        "plane-alert-db.csv",
+        "data/plane-alert-db.csv",
         mode="wb",
         index=False,
         header=True,
@@ -34,7 +34,7 @@ if __name__ == "__main__":
         logging.info(f"Creating the '{category}' category CSV file...")
         category_df = df[df["#CMPG"] == category]
         category_df.to_csv(
-            f"plane-alert-{category.lower()}.csv",
+            f"data/plane-alert-{category.lower()}.csv",
             index=False,
             mode="wb",
             encoding="utf8",

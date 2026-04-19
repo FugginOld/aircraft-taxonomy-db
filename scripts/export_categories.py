@@ -9,7 +9,7 @@ logging.basicConfig(
 
 if __name__ == "__main__":
     logging.info("Reading the main csv file...")
-    df = pd.read_csv("plane-alert-db.csv")
+    df = pd.read_csv("data/plane-alert-db.csv")
 
     logging.info("Identifying and sorting categories by frequency...")
     category_sorted = (
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     logging.info("Creating the plane-alert-categories.csv file, sorted by frequency.")
 
     category_sorted.to_csv(
-        "plane-alert-categories.csv",
+        "data/plane-alert-categories.csv",
         index=False,
         header=True,
         encoding="utf8",

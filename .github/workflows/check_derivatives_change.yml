@@ -3,7 +3,7 @@ name: Check derivatives change
 on:
   pull_request:
     paths:
-      - "*.csv"
+      - "data/*.csv"
 
 permissions:
   contents: read
@@ -22,9 +22,9 @@ jobs:
         uses: tj-actions/changed-files@v47.0.5
         with:
           files: |
-            *.csv
-            !plane-alert-db.csv
-            !plane-alert-pia.csv
+            data/*.csv
+            !data/plane-alert-db.csv
+            !data/plane-alert-pia.csv
           separator: ","
 
       - uses: actions/setup-python@v6.2.0

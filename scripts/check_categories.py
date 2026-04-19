@@ -10,7 +10,7 @@ logging.basicConfig(
 
 if __name__ == "__main__":
     logging.info("Reading the main csv file...")
-    category_unique_df = pd.read_csv("plane-alert-db.csv")
+    category_unique_df = pd.read_csv("data/plane-alert-db.csv")
 
     category_unique_df = (
         category_unique_df["Category"]
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     logging.info(f"Total Categories in PR Count: ({category_unique_df.shape[0]}).")
 
     logging.info("Reading the export category csv file...")
-    valid_df = pd.read_csv("plane-alert-categories.csv")
+    valid_df = pd.read_csv("data/plane-alert-categories.csv")
     valid_df = (
         valid_df["Category"].sort_values().reset_index(drop=False).drop("index", axis=1)
     )

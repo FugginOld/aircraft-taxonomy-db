@@ -9,8 +9,8 @@ on:
     paths:
       - "scripts/update_readme.py"
       - "readme.mustache"
-      - "!plane-alert-db.csv"
-      - "!plane-alert-ukraine.csv"
+      - "!data/plane-alert-db.csv"
+      - "!data/plane-alert-ukraine.csv"
       - "!scripts/create_db_derivatives.py"
 
 jobs:

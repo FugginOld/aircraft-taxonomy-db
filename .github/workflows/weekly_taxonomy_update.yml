@@ -1,0 +1,98 @@
+name: Weekly taxonomy update
+
+# Runs every Sunday at 04:00 UTC.
+# Refreshes public aircraft reference caches, expands aliases,
+# validates and auto-promotes taxonomy references, then
+# re-normalises data/plane-alert-*.csv when references changed.
+
+permissions:
+  contents: write
+
+on:
+  schedule:
+    - cron: "0 4 * * 0"
+  workflow_dispatch:
+    inputs:
+      force_refresh:
+        description: "Force re-normalisation even if references are unchanged"
+        required: false
+        default: "false"
+      skip_sync:
+        description: "Skip downloading public source caches"
+        required: false
+        default: "false"
+
+jobs:
+  weeklyTaxonomyUpdate:
+    if: ${{ github.repository == 'FugginOld/plane-alert-db-normalized' || vars.RUN_WEEKLY_UPDATE }}
+    name: Refresh taxonomy references and re-normalise data
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6.0.2
+
+      - uses: actions/setup-python@v6.2.0
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r ./scripts/requirements.txt
+
+      - name: Validate schema before update
+        run: |
+          python ./scripts/validate_schema.py \
+            --lookup taxonomy/aircraft_type_lookup.csv \
+            --aliases taxonomy/aircraft_type_aliases.csv \
+            --data-files data/plane-alert-db.csv data/plane-alert-pia.csv
+
+      - name: Refresh public aircraft source caches
+        if: ${{ github.event.inputs.skip_sync != 'true' }}
+        run: |
+          python ./scripts/sync_public_aircraft_sources.py \
+            --cache-dir cache/public_sources
+
+      - name: Run weekly update pipeline
+        run: |
+          EXTRA_FLAGS=""
+          if [ "${{ github.event.inputs.force_refresh }}" = "true" ]; then
+            EXTRA_FLAGS="--force-refresh"
+          fi
+          if [ "${{ github.event.inputs.skip_sync }}" = "true" ]; then
+            EXTRA_FLAGS="$EXTRA_FLAGS --skip-sync"
+          fi
+          python ./scripts/weekly_update_pipeline_v3.py \
+            --workspace . \
+            --normalizer scripts/normalize_aircraft_v5.py \
+            --alias-expander scripts/expand_aircraft_aliases_v2.py \
+            --validator scripts/validate_aircraft_references.py \
+            --promoter scripts/auto_promote_aircraft_references.py \
+            --seed-aliases taxonomy/aircraft_aliases.csv \
+            --seed-lookup taxonomy/aircraft_lookup_seed.csv \
+            --no-audit-cols \
+            $EXTRA_FLAGS
+
+      - name: Validate schema after update
+        run: |
+          python ./scripts/validate_schema.py \
+            --lookup taxonomy/aircraft_type_lookup.csv \
+            --aliases taxonomy/aircraft_type_aliases.csv \
+            --data-files data/plane-alert-db.csv data/plane-alert-pia.csv
+
+      - name: Upload weekly update build artifacts
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: weekly-update-artifacts
+          path: build/weekly_update/
+          if-no-files-found: warn
+
+      - name: Commit updated canonical references and data files
+        uses: stefanzweifel/git-auto-commit-action@v7.1.0
+        with:
+          commit_message: "chore: weekly taxonomy update"
+          file_pattern: |
+            taxonomy/aircraft_type_lookup.csv
+            taxonomy/aircraft_type_aliases.csv
+            data/plane-alert-db.csv
+            data/plane-alert-pia.csv
+            data/plane-alert-wip.csv

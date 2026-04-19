@@ -39,7 +39,7 @@ def write_rows(path: Path, rows: dict[str, dict[str, str]]) -> None:
 def main() -> int:
     p = argparse.ArgumentParser(description="Promote reviewed lookup rows")
     p.add_argument("reviewed", help="Reviewed lookup CSV")
-    p.add_argument("--target", default="aircraft_type_lookup.csv", help="Canonical lookup target")
+    p.add_argument("--target", default="taxonomy/aircraft_type_lookup.csv", help="Canonical lookup target")
     args = p.parse_args()
 
     reviewed = load_rows(Path(args.reviewed))

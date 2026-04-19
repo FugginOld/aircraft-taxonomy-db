@@ -3,8 +3,8 @@ name: Check main databases CSV format
 on:
   pull_request:
     paths:
-      - "plane-alert-db.csv"
-      - "plane-alert-pia.csv"
+      - "data/plane-alert-db.csv"
+      - "data/plane-alert-pia.csv"
 
 jobs:
   checkMainDatabases:

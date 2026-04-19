@@ -11,11 +11,11 @@ logging.basicConfig(
 
 if __name__ == "__main__":
     logging.info("Reading 'plane-alert-db' csv file...")
-    main_df = pd.read_csv("plane-alert-db.csv")
+    main_df = pd.read_csv("data/plane-alert-db.csv")
     logging.info("'plane-alert-db' csv file read successfully.")
 
     logging.info("Reading 'badgers-best' csv file...")
-    bangers = pd.read_csv("badgers-best.csv")
+    bangers = pd.read_csv("data/badgers-best.csv")
     logging.info("'badgers-best' csv file read successfully.")
 
     logging.info("Get new items in 'bangers-best' database...")

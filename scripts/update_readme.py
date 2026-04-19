@@ -10,10 +10,10 @@ logging.basicConfig(
 
 if __name__ == "__main__":
     logging.info("Reading the main csv file...")
-    df = pd.read_csv("plane-alert-db.csv")
+    df = pd.read_csv("data/plane-alert-db.csv")
 
     logging.info("Reading the PIA csv file...")
-    pia_df = pd.read_csv("plane-alert-pia.csv")
+    pia_df = pd.read_csv("data/plane-alert-pia.csv")
     logging.info("All csv files read successfully.")
 
     plane_count_df = df["$ICAO"].drop_duplicates().reset_index(drop=True)

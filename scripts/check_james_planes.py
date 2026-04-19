@@ -14,7 +14,7 @@ logging.basicConfig(
 if __name__ == "__main__":
 
     logging.info("Reading 'plane-alert-db' csv file...")
-    main_df = pd.read_csv("plane-alert-db.csv")
+    main_df = pd.read_csv("data/plane-alert-db.csv")
     logging.info("'plane-alert-db' csv file read successfully.")
 
 

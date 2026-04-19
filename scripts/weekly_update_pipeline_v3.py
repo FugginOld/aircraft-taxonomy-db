@@ -59,8 +59,8 @@ def main() -> int:
     p.add_argument("--validator", default="validate_aircraft_references.py")
     p.add_argument("--promoter", default="auto_promote_aircraft_references.py")
     p.add_argument("--sync-script", default="sync_public_aircraft_sources.py")
-    p.add_argument("--seed-aliases", default="aircraft_aliases.csv")
-    p.add_argument("--seed-lookup", default="aircraft_lookup_seed.csv")
+    p.add_argument("--seed-aliases", default="taxonomy/aircraft_aliases.csv")
+    p.add_argument("--seed-lookup", default="taxonomy/aircraft_lookup_seed.csv")
     p.add_argument("--cache-dir", default="cache/public_sources")
     p.add_argument("--skip-sync", action="store_true")
     p.add_argument("--no-audit-cols", action="store_true")
@@ -94,8 +94,8 @@ def main() -> int:
 
     validate_cmd = [
         sys.executable, str(ws / args.validator),
-        "--lookup", str(ws / args.seed_lookup),
-        "--aliases", str(verified_expanded),
+        "--lookup", str(published_lookup),
+        "--aliases", str(published_aliases),
         "--output-dir", str(outdir),
     ]
     if public_csvs:
@@ -104,8 +104,8 @@ def main() -> int:
 
     promote_cmd = [
         sys.executable, str(ws / args.promoter),
-        "--lookup-existing", str(ws / args.seed_lookup),
-        "--aliases-existing", str(verified_expanded),
+        "--lookup-existing", str(published_lookup),
+        "--aliases-existing", str(published_aliases),
         "--lookup-review", str(outdir / "aircraft_type_lookup_review.csv"),
         "--aliases-review", str(outdir / "aircraft_type_aliases_review.csv"),
         "--lookup-threshold", str(args.lookup_threshold),
@@ -114,8 +114,8 @@ def main() -> int:
     ]
     run(promote_cmd, cwd=ws)
 
-    published_aliases = ws / "aircraft_type_aliases.csv"
-    published_lookup = ws / "aircraft_type_lookup.csv"
+    published_aliases = ws / "taxonomy" / "aircraft_type_aliases.csv"
+    published_lookup = ws / "taxonomy" / "aircraft_type_lookup.csv"
 
     aliases_changed = replace_if_changed(
         outdir / "aircraft_type_aliases_promoted_for_normalizer.csv",
@@ -127,7 +127,11 @@ def main() -> int:
     )
     refs_changed = aliases_changed or lookup_changed
 
-    plane_files = sorted(ws.glob("plane_alert_*.csv"))
+    _SKIP_DATA_STEMS = {"plane-alert-categories", "plane-alert-search-terms-to-do"}
+    plane_files = sorted(
+        f for f in ws.glob("data/plane-alert-*.csv")
+        if f.stem not in _SKIP_DATA_STEMS
+    )
     refreshed = 0
     if refs_changed or args.force_refresh:
         for plane_file in plane_files:
