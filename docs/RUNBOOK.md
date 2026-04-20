@@ -13,6 +13,7 @@ taxonomy used to normalise the plane-alert-db dataset.
 | `taxonomy/` | Taxonomy reference files (lookup seed, canonical lookup/aliases) | ✅ Yes |
 | `cache/public_sources/` | Downloaded public aircraft database snapshots | ❌ No (gitignored) |
 | `build/weekly_update/` | Intermediate pipeline artefacts from the weekly run | ❌ No (gitignored) |
+| `review/` | Review-queue CSV outputs from normalisation runs | ✅ Yes |
 | `scripts/` | All automation scripts | ✅ Yes |
 | `docs/` | Documentation | ✅ Yes |
 
@@ -87,6 +88,7 @@ weekly_update_pipeline_v3.py
                 and data/plane-alert-search-terms-to-do.csv
                 (for example: data/plane-alert-db.csv, data/plane-alert-pia.csv,
                  data/plane-alert-wip.csv, and any existing civ/mil/pol/gov derivatives)
+         writes review queues to review/plane-alert-*_review.csv
 ```
 
 In GitHub Actions, the weekly workflow commits updates for:
@@ -164,7 +166,7 @@ python scripts/normalize_aircraft_v5.py data/plane-alert-db.csv \
     --no-audit-cols
 ```
 
-Review `data/plane-alert-db_review.csv` for rows the normaliser could not classify.
+Review `review/plane-alert-db_review.csv` for rows the normaliser could not classify.
 
 ---
 
