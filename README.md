@@ -3,7 +3,7 @@
 This project consists of lists of 'interesting' aircraft, formatted as CSV files.
 
 > **Warning**
-> Please only suggest/make any changes to the [plane-alert-db.csv](plane-alert-db.csv) and [plane-alert-pia.csv](plane-alert-pia.csv) files on GitHub - all other files are generated from these files, and if you do not make your changes there, they will be overwritten and lost. Additionally, it is **not recommended** to edit the CSV files in Microsoft Excel, as Excel will attempt to "fix" some ICAO hexes and other fields. It's better to use a code editor such as VS Studio Code—you can access the web version of Code by pressing the period key . when viewing the file you wish to edit.
+> Please only suggest/make any changes to the [plane-alert-db.csv](data/plane-alert-db.csv) and [plane-alert-pia.csv](data/plane-alert-pia.csv) files - all other CSV files are auto-generated from these two and will be overwritten. It is also **not recommended** to edit the CSV files in Microsoft Excel, as Excel will attempt to "fix" some ICAO hexes and other fields. Use a code editor such as VS Code instead—press the period key `.` on any file in GitHub to open the web editor.
 
 ## TOC <!-- omit in toc -->
 
@@ -16,20 +16,18 @@ This project consists of lists of 'interesting' aircraft, formatted as CSV files
 
 ## Current Content
 
-There currently are about **15182** unique aircraft in **20** categories found in this repository. This [Dashboard](https://lookerstudio.google.com/reporting/94a654de-8cb5-4e7a-a3e5-e4ce25e47f37) contains details of the main list.
+There currently are about **15182** unique aircraft in **20** categories found in this repository.
 These aircraft are divided into two main databases:
 
--   [plane-alert-db.csv](plane-alert-db.csv) - A list of interesting aircraft with tags, categories and links. (15182)
--   [plane-alert-pia.csv](plane-alert-pia.csv): A list that contains PIA planes. (0)
+-   [plane-alert-db.csv](data/plane-alert-db.csv) - A list of interesting aircraft with tags, categories and links. (15182)
+-   [plane-alert-pia.csv](data/plane-alert-pia.csv) - A list that contains Privacy ICAO Address (PIA) planes. (0)
 
-Based on these main databases, several derivative databases are created using a [GitHub action](https://github.com/sdr-enthusiasts/plane-alert-db/actions/workflows/create_db_derivatives.yaml):
+Based on these main databases, several derivative databases are created automatically by a [GitHub Action](.github/workflows/create_db_derivatives.yaml):
 
--   [plane-alert-civ.csv](plane-alert-civ.csv) - Civilian Registered Aircraft, includes Historic and Distinctive. (3968)
--   [plane-alert-mil.csv](plane-alert-mil.csv) - Military Only. (8654)
--   [plane-alert-pol.csv](plane-alert-pol.csv) - Police Forces. (919)
--   [plane-alert-gov.csv](plane-alert-gov.csv) - Governments, Gov Agencies and Dictators. (1641)
-
-This [Dashboard](https://lookerstudio.google.com/reporting/46ff4328-09d3-4e65-ab5a-bd2ba27a18fd) contains details of the [main](https://github.com/sdr-enthusiasts/plane-alert-db/blob/main/plane-alert-db.csv) list.
+-   [plane-alert-civ.csv](data/plane-alert-civ.csv) - Civilian Registered Aircraft, includes Historic and Distinctive. (3968)
+-   [plane-alert-mil.csv](data/plane-alert-mil.csv) - Military Only. (8654)
+-   [plane-alert-pol.csv](data/plane-alert-pol.csv) - Police Forces. (919)
+-   [plane-alert-gov.csv](data/plane-alert-gov.csv) - Governments, Gov Agencies and Dictators. (1641)
 
 ## Description of Categories
 
@@ -84,10 +82,10 @@ Column prefix conventions:
 
 ## Contributing
 
-Feel free to [open an issue](https://github.com/sdr-enthusiasts/plane-alert-db/issues) if you have ideas on improving this repository or want to report a bug! All contributions are welcome 🚀. Please consult the [contribution guidelines](CONTRIBUTING.md) for more information. You can also check out the [TODOS](TODOS.md) page if you want to contribute to this repository but need some ideas.
+Feel free to [open an issue](https://github.com/FugginOld/plane-alert-db-normalized/issues) if you have ideas on improving this repository or want to report a bug! All contributions are welcome 🚀. Please consult the [contribution guidelines](CONTRIBUTING.md) for more information. You can also check out the [TODOS](TODOS.md) page if you want to contribute to this repository but need some ideas.
 
 > **Warning**
-> As also [explained above](#current-content), this repository contains four main databases to which people can contribute. The other databases are created automatically using [GitHub action](https://github.com/sdr-enthusiasts/plane-alert-db/actions/workflows/create_db_derivatives.yaml). As a result, please only suggest/make any changes to these main databases. Changes made to all other CSV files will be overwritten and lost. Additionally, it is **not recommended** to edit the CSV files in Microsoft Excel, as Excel will attempt to "fix" some ICAO hexes and other fields. It's better to use a code editor such as VS Studio Code—you can access the web version of Code by pressing the period key . when viewing the file you wish to edit.
+> As also [explained above](#current-content), this repository has two main databases to which people can contribute: `plane-alert-db.csv` and `plane-alert-pia.csv`. The derivative databases (`civ`, `mil`, `pol`, `gov`) are created automatically by a [GitHub Action](.github/workflows/create_db_derivatives.yaml) and must not be edited directly — any manual changes will be overwritten. Additionally, it is **not recommended** to edit the CSV files in Microsoft Excel, as Excel will attempt to "fix" some ICAO hexes and other fields. Use a code editor such as VS Code instead—press the period key `.` on any file in GitHub to open the web editor.
 
 If you're creating a pull request with additions, please add them to the end of the file. We may sort the list periodically to group like planes together.
 
@@ -115,8 +113,8 @@ This data has been gathered from far too many sources to mention, but some sites
 
 ## LICENSE
 
-Copyright (C) 2022-2024 by SDR-Enthusiasts, Ramon F. Kolb (kx1t), and contributors.
-A list of contributors can be found at <https://github.com/sdr-enthusiasts/plane-alert-db/graphs/contributors>
+Copyright (C) 2022–2024 by SDR-Enthusiasts, Ramon F. Kolb (kx1t), and contributors.
+A list of contributors can be found at <https://github.com/FugginOld/plane-alert-db-normalized/graphs/contributors>
 
 This Database is made available under the Open Database License: <http://opendatacommons.org/licenses/odbl/1.0/>
 Any rights in individual contents of the database are licensed under the Database Contents License: <http://opendatacommons.org/licenses/dbcl/1.0/>
