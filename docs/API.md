@@ -96,7 +96,7 @@ GET /api/v1/databases
 [
   {
     "name": "main",
-    "filename": "plane-alert-db.csv",
+    "filename": "aircraft-taxonomy-db.csv",
     "rows": 15182,
     "columns": ["ICAO", "Registration", "Operator", "Type", "ICAO Type",
                 "CMPG", "Tag 1", "Tag 2", "Tag 3", "Category"]

@@ -30,5 +30,5 @@ RUN chmod +x docker/weekly_update.sh
 
 # Default command: interactive Bash shell.
 # Override with a specific command when running non-interactively,
-# e.g.:  docker run … plane-alert-db /workspace/docker/weekly_update.sh
+# e.g.:  docker run … aircraft-taxonomy-db /workspace/docker/weekly_update.sh
 CMD ["/bin/bash"]

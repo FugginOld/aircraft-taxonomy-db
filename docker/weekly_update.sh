@@ -4,7 +4,7 @@
 # Performs the full weekly pipeline:
 #   1. Download fresh public aircraft reference data into cache/public_sources/
 #   2. Expand aliases, validate and auto-promote taxonomy references
-#   3. Re-normalise data/plane-alert-*.csv when references have changed
+#   3. Re-normalise data/aircraft-taxonomy-*.csv when references have changed
 #
 # All output is written to both stdout/stderr (captured by journald when run
 # via the systemd service) and appended to logs/weekly_aircraft_update.log

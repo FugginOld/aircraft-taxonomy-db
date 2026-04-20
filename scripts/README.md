@@ -20,8 +20,8 @@ All scripts assume they are run from the **repository root** (not from inside `s
 
 | Script | Purpose |
 | --- | --- |
-| `check_main_databases.py` | Validates `data/plane-alert-db.csv` — checks for duplicate ICAOs and invalid hex codes. |
-| `check_categories.py` | Verifies that every Category in `data/plane-alert-db.csv` appears in `data/plane-alert-categories.csv`. |
+| `check_main_databases.py` | Validates `data/aircraft-taxonomy-db.csv` — checks for duplicate ICAOs and invalid hex codes. |
+| `check_categories.py` | Verifies that every Category in `data/aircraft-taxonomy-db.csv` appears in `data/aircraft-taxonomy-categories.csv`. |
 | `check_invalid_derivatives.py` | Used by CI to detect hand-edited derivative files. |
 | `validate_schema.py` | Schema-contract checker. Validates column headers, duplicate keys, and taxonomy values in lookup, aliases, and data files. |
 
@@ -29,8 +29,8 @@ All scripts assume they are run from the **repository root** (not from inside `s
 
 | Script | Purpose |
 | --- | --- |
-| `create_db_derivatives.py` | Splits `data/plane-alert-db.csv` by `#CMPG` into `data/plane-alert-{civ,mil,pol,gov}.csv`. |
-| `export_categories.py` | Exports the unique Category list to `data/plane-alert-categories.csv`. |
+| `create_db_derivatives.py` | Splits `data/aircraft-taxonomy-db.csv` by `#CMPG` into `data/aircraft-taxonomy-{civ,mil,pol,gov}.csv`. |
+| `export_categories.py` | Exports the unique Category list to `data/aircraft-taxonomy-categories.csv`. |
 | `update_readme.py` | Regenerates `README.md` from `readme.mustache` with live row counts. |
 
 ### Taxonomy normalisation pipeline scripts
@@ -91,32 +91,32 @@ This script processes one or more CSV files and produces:
 ### Usage
 
 ```bash
-# Run normaliser (produces data/plane-alert-db_normalized.csv + data/plane-alert-db_review.csv)
-python scripts/normalize_aircraft_v5.py data/plane-alert-db.csv \
+# Run normaliser (produces data/aircraft-taxonomy-db_normalized.csv + data/aircraft-taxonomy-db_review.csv)
+python scripts/normalize_aircraft_v5.py data/aircraft-taxonomy-db.csv \
     --lookup taxonomy/aircraft_type_lookup.csv \
     --aliases taxonomy/aircraft_type_aliases.csv
 
 # Production output — no diagnostic audit columns
-python scripts/normalize_aircraft_v5.py data/plane-alert-db.csv \
+python scripts/normalize_aircraft_v5.py data/aircraft-taxonomy-db.csv \
     --lookup taxonomy/aircraft_type_lookup.csv \
     --aliases taxonomy/aircraft_type_aliases.csv \
     --no-audit-cols
 ```
 
-After running, inspect `data/plane-alert-db_review.csv`. For each unresolved row:
+After running, inspect `data/aircraft-taxonomy-db_review.csv`. For each unresolved row:
 
 1. Add its ICAO type to `taxonomy/aircraft_type_lookup.csv` (and the seed), or
 2. Add an alias for the free-text `$Type` value to `taxonomy/aircraft_type_aliases.csv` (and the seed).
 
 Then re-run until the review file is empty (or acceptably small).
 
-When running `weekly_update_pipeline_v3.py`, generated `plane-alert-*_review.csv` files are moved into `review/`.
+When running `weekly_update_pipeline_v3.py`, generated `aircraft-taxonomy-*_review.csv` files are moved into `review/`.
 
 ### Important: `#CMPG` passthrough
 
 The `#CMPG` column (`Mil` / `Civ` / `Gov` / `Pol`) is **intentionally not modified** by the
 normaliser. It reflects the operator type and is used by `create_db_derivatives.py` to split
-the database into `data/plane-alert-{mil,civ,gov,pol}.csv`.
+the database into `data/aircraft-taxonomy-{mil,civ,gov,pol}.csv`.
 
 ---
 
@@ -126,7 +126,7 @@ the database into `data/plane-alert-{mil,civ,gov,pol}.csv`.
 python scripts/validate_schema.py \
     --lookup taxonomy/aircraft_type_lookup.csv \
     --aliases taxonomy/aircraft_type_aliases.csv \
-    --data-files data/plane-alert-db.csv data/plane-alert-pia.csv
+    --data-files data/aircraft-taxonomy-db.csv data/aircraft-taxonomy-pia.csv
 ```
 
 ---

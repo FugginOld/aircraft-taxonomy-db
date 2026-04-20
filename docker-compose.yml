@@ -36,8 +36,8 @@ services:
     build:
       context: .
       dockerfile: api/Dockerfile
-    image: plane-alert-db-api:latest
-    container_name: plane-alert-db-api
+    image: aircraft-taxonomy-db-api:latest
+    container_name: aircraft-taxonomy-db-api
     restart: unless-stopped
     ports:
       - "${API_PORT:-8000}:8000"
@@ -60,8 +60,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: plane-alert-db:latest
-    container_name: plane-alert-db-weekly
+    image: aircraft-taxonomy-db:latest
+    container_name: aircraft-taxonomy-db-weekly
     profiles:
       - tools
     volumes:

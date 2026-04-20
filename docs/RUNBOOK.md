@@ -1,7 +1,7 @@
 # Aircraft Taxonomy Maintenance — Operational Runbook
 
 This runbook describes the day-to-day and weekly operations for maintaining the aviation
-taxonomy used to normalise the plane-alert-db dataset.
+taxonomy used to normalise the aircraft-taxonomy-db dataset.
 
 ---
 
@@ -35,17 +35,17 @@ taxonomy used to normalise the plane-alert-db dataset.
 
 | File | Role |
 | --- | --- |
-| `plane-alert-db.csv` | Main aircraft database (source of truth). Edit this file directly. |
-| `plane-alert-pia.csv` | Privacy ICAO Address (PIA) aircraft. |
-| `plane-alert-wip.csv` | Work-in-progress aircraft candidates. |
-| `plane-alert-civ.csv` | Auto-generated: civilian aircraft (CMPG=Civ). |
-| `plane-alert-mil.csv` | Auto-generated: military aircraft (CMPG=Mil). |
-| `plane-alert-pol.csv` | Auto-generated: police aircraft (CMPG=Pol). |
-| `plane-alert-gov.csv` | Auto-generated: government aircraft (CMPG=Gov). |
-| `plane-alert-categories.csv` | Auto-generated: unique Category values sorted by frequency. |
+| `aircraft-taxonomy-db.csv` | Main aircraft database (source of truth). Edit this file directly. |
+| `aircraft-taxonomy-pia.csv` | Privacy ICAO Address (PIA) aircraft. |
+| `aircraft-taxonomy-wip.csv` | Work-in-progress aircraft candidates. |
+| `aircraft-taxonomy-civ.csv` | Auto-generated: civilian aircraft (CMPG=Civ). |
+| `aircraft-taxonomy-mil.csv` | Auto-generated: military aircraft (CMPG=Mil). |
+| `aircraft-taxonomy-pol.csv` | Auto-generated: police aircraft (CMPG=Pol). |
+| `aircraft-taxonomy-gov.csv` | Auto-generated: government aircraft (CMPG=Gov). |
+| `aircraft-taxonomy-categories.csv` | Auto-generated: unique Category values sorted by frequency. |
 
-> **Important:** Only edit `plane-alert-db.csv` and `plane-alert-pia.csv` directly.
-> All other `data/plane-alert-*.csv` files are regenerated automatically by GitHub Actions.
+> **Important:** Only edit `aircraft-taxonomy-db.csv` and `aircraft-taxonomy-pia.csv` directly.
+> All other `data/aircraft-taxonomy-*.csv` files are regenerated automatically by GitHub Actions.
 
 ---
 
@@ -83,25 +83,25 @@ weekly_update_pipeline_v3.py
     └─ normalize_aircraft_v5.py (only runs when canonical files changed, or --force-refresh)
          reads  taxonomy/aircraft_type_lookup.csv
                  taxonomy/aircraft_type_aliases.csv
-         writes every data/plane-alert-*.csv in place
-                except data/plane-alert-categories.csv
-                and data/plane-alert-search-terms-to-do.csv
-                (for example: data/plane-alert-db.csv, data/plane-alert-pia.csv,
-                 data/plane-alert-wip.csv, and any existing civ/mil/pol/gov derivatives)
-         writes review queues to review/plane-alert-*_review.csv
+         writes every data/aircraft-taxonomy-*.csv in place
+                except data/aircraft-taxonomy-categories.csv
+                and data/aircraft-taxonomy-search-terms-to-do.csv
+                (for example: data/aircraft-taxonomy-db.csv, data/aircraft-taxonomy-pia.csv,
+                 data/aircraft-taxonomy-wip.csv, and any existing civ/mil/pol/gov derivatives)
+         writes review queues to review/aircraft-taxonomy-*_review.csv
 ```
 
 In GitHub Actions, the weekly workflow commits updates for:
 
 - `taxonomy/aircraft_type_lookup.csv`
 - `taxonomy/aircraft_type_aliases.csv`
-- `data/plane-alert-db.csv`
-- `data/plane-alert-pia.csv`
-- `data/plane-alert-wip.csv`
+- `data/aircraft-taxonomy-db.csv`
+- `data/aircraft-taxonomy-pia.csv`
+- `data/aircraft-taxonomy-wip.csv`
 
-Derivative outputs (`data/plane-alert-civ.csv`, `data/plane-alert-mil.csv`,
-`data/plane-alert-pol.csv`, `data/plane-alert-gov.csv`, and
-`data/plane-alert-categories.csv`) are produced by derivative-generation workflows.
+Derivative outputs (`data/aircraft-taxonomy-civ.csv`, `data/aircraft-taxonomy-mil.csv`,
+`data/aircraft-taxonomy-pol.csv`, `data/aircraft-taxonomy-gov.csv`, and
+`data/aircraft-taxonomy-categories.csv`) are produced by derivative-generation workflows.
 
 ### Confidence thresholds
 
@@ -160,13 +160,13 @@ python scripts/weekly_update_pipeline_v3.py --workspace . --force-refresh --no-a
 ### Normalise a single file manually
 
 ```bash
-python scripts/normalize_aircraft_v5.py data/plane-alert-db.csv \
+python scripts/normalize_aircraft_v5.py data/aircraft-taxonomy-db.csv \
     --lookup taxonomy/aircraft_type_lookup.csv \
     --aliases taxonomy/aircraft_type_aliases.csv \
     --no-audit-cols
 ```
 
-Review `data/plane-alert-db_review.csv` for rows the normaliser could not classify.
+Review `data/aircraft-taxonomy-db_review.csv` for rows the normaliser could not classify.
 
 ---
 
@@ -204,7 +204,7 @@ python scripts/promote_reviewed_lookup_rows.py path/to/reviewed_lookup.csv \
 python scripts/validate_schema.py \
     --lookup taxonomy/aircraft_type_lookup.csv \
     --aliases taxonomy/aircraft_type_aliases.csv \
-    --data-files data/plane-alert-db.csv data/plane-alert-pia.csv
+    --data-files data/aircraft-taxonomy-db.csv data/aircraft-taxonomy-pia.csv
 ```
 
 Use `--strict` to treat Category violations in data files as hard errors.
@@ -282,7 +282,7 @@ cp taxonomy/aircraft_type_aliases.csv.20260419T040000Z.bak taxonomy/aircraft_typ
 Data files are similarly backed up before in-place replacement:
 
 ```text
-data/plane-alert-db.csv.<timestamp>.bak
+data/aircraft-taxonomy-db.csv.<timestamp>.bak
 ```
 
 Restore the same way, then commit.

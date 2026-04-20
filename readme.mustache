@@ -1,9 +1,9 @@
-# plane-alert-db <!-- omit in toc -->
+# aircraft-taxonomy-db <!-- omit in toc -->
 
 This project consists of lists of 'interesting' aircraft, formatted as CSV files.
 
 > **Warning**
-> Please only suggest/make any changes to the [plane-alert-db.csv](data/plane-alert-db.csv) and [plane-alert-pia.csv](data/plane-alert-pia.csv) files - all other CSV files are auto-generated from these two and will be overwritten. It is also **not recommended** to edit the CSV files in Microsoft Excel, as Excel will attempt to "fix" some ICAO hexes and other fields. Use a code editor such as VS Code instead—press the period key `.` on any file in GitHub to open the web editor.
+> Please only suggest/make any changes to the [aircraft-taxonomy-db.csv](data/aircraft-taxonomy-db.csv) and [aircraft-taxonomy-pia.csv](data/aircraft-taxonomy-pia.csv) files - all other CSV files are auto-generated from these two and will be overwritten. It is also **not recommended** to edit the CSV files in Microsoft Excel, as Excel will attempt to "fix" some ICAO hexes and other fields. Use a code editor such as VS Code instead—press the period key `.` on any file in GitHub to open the web editor.
 
 ## TOC <!-- omit in toc -->
 
@@ -19,15 +19,15 @@ This project consists of lists of 'interesting' aircraft, formatted as CSV files
 There currently are about **{{planes}}** unique aircraft in **{{categories}}** categories found in this repository.
 These aircraft are divided into two main databases:
 
--   [plane-alert-db.csv](data/plane-alert-db.csv) - A list of interesting aircraft with tags, categories and links. ({{plane_alert_db}})
--   [plane-alert-pia.csv](data/plane-alert-pia.csv) - A list that contains Privacy ICAO Address (PIA) planes. ({{plane_alert_pia}})
+-   [aircraft-taxonomy-db.csv](data/aircraft-taxonomy-db.csv) - A list of interesting aircraft with tags, categories and links. ({{plane_alert_db}})
+-   [aircraft-taxonomy-pia.csv](data/aircraft-taxonomy-pia.csv) - A list that contains Privacy ICAO Address (PIA) planes. ({{plane_alert_pia}})
 
 Based on these main databases, several derivative databases are created automatically by a [GitHub Action](.github/workflows/create_db_derivatives.yaml):
 
--   [plane-alert-civ.csv](data/plane-alert-civ.csv) - Civilian Registered Aircraft, includes Historic and Distinctive. ({{civ_count}})
--   [plane-alert-mil.csv](data/plane-alert-mil.csv) - Military Only. ({{mil_count}})
--   [plane-alert-pol.csv](data/plane-alert-pol.csv) - Police Forces. ({{pol_count}})
--   [plane-alert-gov.csv](data/plane-alert-gov.csv) - Governments, Gov Agencies and Dictators. ({{gov_count}})
+-   [aircraft-taxonomy-civ.csv](data/aircraft-taxonomy-civ.csv) - Civilian Registered Aircraft, includes Historic and Distinctive. ({{civ_count}})
+-   [aircraft-taxonomy-mil.csv](data/aircraft-taxonomy-mil.csv) - Military Only. ({{mil_count}})
+-   [aircraft-taxonomy-pol.csv](data/aircraft-taxonomy-pol.csv) - Police Forces. ({{pol_count}})
+-   [aircraft-taxonomy-gov.csv](data/aircraft-taxonomy-gov.csv) - Governments, Gov Agencies and Dictators. ({{gov_count}})
 
 ## Description of Categories
 
@@ -85,7 +85,7 @@ Column prefix conventions:
 Feel free to [open an issue](https://github.com/FugginOld/aircraft-taxonomy-db/issues) if you have ideas on improving this repository or want to report a bug! All contributions are welcome 🚀. Please consult the [contribution guidelines](CONTRIBUTING.md) for more information. You can also check out the [TODOS](TODOS.md) page if you want to contribute to this repository but need some ideas.
 
 > **Warning**
-> As also [explained above](#current-content), this repository has two main databases to which people can contribute: `plane-alert-db.csv` and `plane-alert-pia.csv`. The derivative databases (`civ`, `mil`, `pol`, `gov`) are created automatically by a [GitHub Action](.github/workflows/create_db_derivatives.yaml) and must not be edited directly — any manual changes will be overwritten. Additionally, it is **not recommended** to edit the CSV files in Microsoft Excel, as Excel will attempt to "fix" some ICAO hexes and other fields. Use a code editor such as VS Code instead—press the period key `.` on any file in GitHub to open the web editor.
+> As also [explained above](#current-content), this repository has two main databases to which people can contribute: `aircraft-taxonomy-db.csv` and `aircraft-taxonomy-pia.csv`. The derivative databases (`civ`, `mil`, `pol`, `gov`) are created automatically by a [GitHub Action](.github/workflows/create_db_derivatives.yaml) and must not be edited directly — any manual changes will be overwritten. Additionally, it is **not recommended** to edit the CSV files in Microsoft Excel, as Excel will attempt to "fix" some ICAO hexes and other fields. Use a code editor such as VS Code instead—press the period key `.` on any file in GitHub to open the web editor.
 
 If you're creating a pull request with additions, please add them to the end of the file. We may sort the list periodically to group like planes together.
 

@@ -5,7 +5,7 @@ Schema contract validator for the aircraft taxonomy pipeline.
 Checks that:
   - taxonomy/aircraft_type_lookup.csv has all required columns and no duplicate keys.
   - taxonomy/aircraft_type_aliases.csv has all required columns and no duplicate (raw_value, match_key) pairs.
-  - Each data file (e.g. data/plane-alert-db.csv) has all required columns, no
+  - Each data file (e.g. data/aircraft-taxonomy-db.csv) has all required columns, no
     duplicate ICAO codes, and only uses Category values from the allowed taxonomy set.
 
 Exits with a non-zero status code when any contract is violated.
@@ -14,7 +14,7 @@ Usage:
     python scripts/validate_schema.py \\
         --lookup taxonomy/aircraft_type_lookup.csv \\
         --aliases taxonomy/aircraft_type_aliases.csv \\
-        --data-files data/plane-alert-db.csv data/plane-alert-pia.csv
+        --data-files data/aircraft-taxonomy-db.csv data/aircraft-taxonomy-pia.csv
 """
 from __future__ import annotations
 
@@ -193,7 +193,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     p.add_argument("--aliases", default="taxonomy/aircraft_type_aliases.csv",
                    help="Canonical aliases CSV")
     p.add_argument("--data-files", nargs="*", default=[],
-                   help="Data CSV files to validate (e.g. data/plane-alert-db.csv)")
+                   help="Data CSV files to validate (e.g. data/aircraft-taxonomy-db.csv)")
     p.add_argument("--strict", action="store_true",
                    help="Treat data-file category violations as errors (default: warnings)")
     args = p.parse_args(argv)

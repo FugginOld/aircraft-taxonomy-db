@@ -23,8 +23,8 @@ jobs:
         with:
           files: |
             data/*.csv
-            !data/plane-alert-db.csv
-            !data/plane-alert-pia.csv
+            !data/aircraft-taxonomy-db.csv
+            !data/aircraft-taxonomy-pia.csv
           separator: ","
 
       - uses: actions/setup-python@v6.2.0

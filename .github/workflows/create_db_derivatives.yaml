@@ -7,7 +7,7 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "data/plane-alert-db.csv"
+      - "data/aircraft-taxonomy-db.csv"
       - "scripts/create_db_derivatives.py"
 
 jobs:
