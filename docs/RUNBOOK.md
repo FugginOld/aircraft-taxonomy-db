@@ -166,7 +166,7 @@ python scripts/normalize_aircraft_v5.py data/plane-alert-db.csv \
     --no-audit-cols
 ```
 
-Review `review/plane-alert-db_review.csv` for rows the normaliser could not classify.
+Review `data/plane-alert-db_review.csv` for rows the normaliser could not classify.
 
 ---
 
