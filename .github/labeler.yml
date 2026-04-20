@@ -2,3 +2,12 @@ documentation:
   - readme.mustache
 planes:
   - '*.csv'
+
+  documentation:
+  - any:
+      - changed-files:
+          - any-glob: [readme.mustache]
+planes:
+  - all:
+      - changed-files:
+          - any-glob: [*.csv]
