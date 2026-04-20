@@ -188,30 +188,30 @@ def search_aircraft(
 
     All text filters are case-insensitive.  Multiple filters are AND-combined.
     """
-    df = _get_main_df().copy()
+    df = _get_main_df()
 
     if df.empty:
         return {"total": 0, "offset": offset, "limit": limit, "rows": []}
 
     if icao:
-        df = df[df["ICAO"].str.contains(icao, case=False, na=False)]
+        df = df[df["ICAO"].str.contains(icao, case=False, na=False, regex=False)]
     if registration:
-        df = df[df["Registration"].str.contains(registration, case=False, na=False)]
+        df = df[df["Registration"].str.contains(registration, case=False, na=False, regex=False)]
     if operator:
-        df = df[df["Operator"].str.contains(operator, case=False, na=False)]
+        df = df[df["Operator"].str.contains(operator, case=False, na=False, regex=False)]
     if aircraft_type:
-        df = df[df["Type"].str.contains(aircraft_type, case=False, na=False)]
+        df = df[df["Type"].str.contains(aircraft_type, case=False, na=False, regex=False)]
     if icao_type:
-        df = df[df["ICAO Type"].str.fullmatch(icao_type, case=False, na=False)]
+        df = df[df["ICAO Type"].str.upper() == icao_type.upper()]
     if cmpg:
-        df = df[df["CMPG"].str.fullmatch(cmpg, case=False, na=False)]
+        df = df[df["CMPG"].str.upper() == cmpg.upper()]
     if category:
-        df = df[df["Category"].str.fullmatch(category, case=False, na=False)]
+        df = df[df["Category"].str.upper() == category.upper()]
     if tag:
         tag_mask = (
-            df["Tag 1"].str.contains(tag, case=False, na=False)
-            | df["Tag 2"].str.contains(tag, case=False, na=False)
-            | df["Tag 3"].str.contains(tag, case=False, na=False)
+            df["Tag 1"].str.contains(tag, case=False, na=False, regex=False)
+            | df["Tag 2"].str.contains(tag, case=False, na=False, regex=False)
+            | df["Tag 3"].str.contains(tag, case=False, na=False, regex=False)
         )
         df = df[tag_mask]
 
@@ -231,7 +231,7 @@ def get_aircraft(icao: str) -> dict[str, Any]:
     df = _get_main_df()
     if df.empty:
         raise HTTPException(status_code=503, detail="Main database not available.")
-    match = df[df["ICAO"].str.fullmatch(icao, case=False, na=False)]
+    match = df[df["ICAO"].str.upper() == icao.upper()]
     if match.empty:
         raise HTTPException(
             status_code=404, detail=f"No aircraft found with ICAO hex '{icao.upper()}'."

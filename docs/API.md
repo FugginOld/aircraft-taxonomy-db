@@ -1,8 +1,8 @@
 # Plane Alert DB – HTTP API
 
-The built-in HTTP API exposes all CSV databases in `data/` as a JSON REST API,
-making them accessible to third-party tools, dashboards, and scripts without
-them having to parse CSV files directly.
+The built-in HTTP API exposes supported CSV-backed databases from `data/` as a
+JSON REST API, making them accessible to third-party tools, dashboards, and
+scripts without having to parse CSV files directly.
 
 ---
 
