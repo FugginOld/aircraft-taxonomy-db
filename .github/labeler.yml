@@ -10,4 +10,4 @@ planes:
 planes:
   - all:
       - changed-files:
-          - any-glob: [*.csv]
+          - any-glob: ["*.csv"]
