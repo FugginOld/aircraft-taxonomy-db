@@ -95,21 +95,11 @@ This is not intended to be a definitive list, especially when it comes to aircra
 
 ## Data Sources
 
-This data has been gathered from far too many sources to mention, but some sites have been _really_ useful:
+Current public source cache manifest (`cache/public_sources/manifest.json`) includes:
 
--   <https://github.com/iatacodes/whatisflying-db>
--   <https://github.com/The-CFR-Project/whatisflying-db>
--   <https://www.flightdb.net/index.php>
--   <http://www.rotorspot.nl/>
--   <http://www.dtvmovements.co.uk/>
--   <http://www.ads-b.nl/>
--   <https://www.live-military-mode-s.eu/>
--   <https://dictatoralert.org/>
--   <http://www.j-hangarspace.jp/>
--   <https://scramble.nl/>
--   <https://www.foxtrotcharlie.ovh/>
--   <https://www.planelogger.com/>
--   <https://www.jetphotos.com/>
+-   <https://opensky-network.org/datasets/metadata/aircraftDatabase.csv>
+-   <https://www.faa.gov/documentLibrary/media/Order/7340.2P_dtd_8-7-25.pdf>
+-   <https://www.icao.int/operational-safety/doc-8643-aircraft-type-designators/search>
 
 ## LICENSE
 
