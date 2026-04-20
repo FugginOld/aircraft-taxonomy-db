@@ -1,0 +1,73 @@
+# Plane Alert DB – Docker Compose
+#
+# Services
+# --------
+#   api           FastAPI HTTP service that exposes the CSV databases as JSON.
+#                 Listens on http://localhost:8000
+#                 Interactive docs:  http://localhost:8000/docs
+#
+#   weekly-update (optional / on-demand) – the existing weekly pipeline that
+#                 refreshes data/, taxonomy/ and cache/.  Run it with:
+#                   docker compose run --rm weekly-update
+#
+# Both services share the same bind-mounted data/ directory so that the API
+# always reflects the latest files after a weekly update run.
+#
+# Usage
+# -----
+#   # Start only the API in the foreground:
+#   docker compose up api
+#
+#   # Start the API in the background:
+#   docker compose up -d api
+#
+#   # Trigger a one-off weekly update without starting the API:
+#   docker compose run --rm weekly-update
+#
+#   # Stop everything:
+#   docker compose down
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # API service
+  # ---------------------------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    image: plane-alert-db-api:latest
+    container_name: plane-alert-db-api
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      # Bind-mount the data directory so the API reads the latest CSVs.
+      - ./data:/data:ro
+    environment:
+      DATA_DIR: /data
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import sys, urllib.request;\ntry: urllib.request.urlopen('http://localhost:8000/health', timeout=2)\nexcept Exception: sys.exit(1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ---------------------------------------------------------------------------
+  # Weekly update (run on demand)
+  # ---------------------------------------------------------------------------
+  weekly-update:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: plane-alert-db:latest
+    container_name: plane-alert-db-weekly
+    profiles:
+      - tools
+    volumes:
+      - ./data:/workspace/data
+      - ./taxonomy:/workspace/taxonomy
+      - ./cache:/workspace/cache
+      - ./build:/workspace/build
+      - ./logs:/workspace/logs
+    command: ["/workspace/docker/weekly_update.sh"]
