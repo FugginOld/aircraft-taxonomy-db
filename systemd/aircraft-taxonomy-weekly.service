@@ -10,25 +10,25 @@ Type=oneshot
 TimeoutStartSec=0
 
 # Path to the cloned repository on the host.
-# Create /etc/plane-alert-weekly.env and set REPO_DIR before enabling.
+# Create /etc/aircraft-taxonomy-weekly.env and set REPO_DIR before enabling.
 # Example: REPO_DIR=/opt/aircraft-taxonomy-db
-EnvironmentFile=/etc/plane-alert-weekly.env
+EnvironmentFile=/etc/aircraft-taxonomy-weekly.env
 
 # Remove the container after the run completes.
 # Volatile directories are bind-mounted so any changes are persisted on the host.
 ExecStart=/usr/bin/docker run --rm \
-    --name plane-alert-weekly \
+    --name aircraft-taxonomy-weekly \
     -v ${REPO_DIR}/data:/workspace/data \
     -v ${REPO_DIR}/taxonomy:/workspace/taxonomy \
     -v ${REPO_DIR}/cache:/workspace/cache \
     -v ${REPO_DIR}/build:/workspace/build \
     -v ${REPO_DIR}/logs:/workspace/logs \
-    plane-alert-db:latest \
+    aircraft-taxonomy-db:latest \
     /workspace/docker/weekly_update.sh
 
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=plane-alert-weekly
+SyslogIdentifier=aircraft-taxonomy-weekly
 
 [Install]
 WantedBy=multi-user.target

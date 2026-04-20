@@ -44,10 +44,10 @@ Run from the **repository root**:
 
 ```bash
 cd /opt/aircraft-taxonomy-db
-docker build -t plane-alert-db:latest .
+docker build -t aircraft-taxonomy-db:latest .
 ```
 
-This creates an image named `plane-alert-db:latest` with Python 3.10, all pip
+This creates an image named `aircraft-taxonomy-db:latest` with Python 3.10, all pip
 dependencies pre-installed, and a snapshot of the repository baked in.  At
 runtime the volatile directories (`data/`, `taxonomy/`, `cache/`, `build/`,
 `logs/`) are bind-mounted from the host, so any changes made inside the container
@@ -66,7 +66,7 @@ docker run --rm \
     -v /opt/aircraft-taxonomy-db/cache:/workspace/cache \
     -v /opt/aircraft-taxonomy-db/build:/workspace/build \
     -v /opt/aircraft-taxonomy-db/logs:/workspace/logs \
-    plane-alert-db:latest \
+    aircraft-taxonomy-db:latest \
     /workspace/docker/weekly_update.sh
 ```
 
@@ -84,7 +84,7 @@ docker run --rm -it \
     -v /opt/aircraft-taxonomy-db/cache:/workspace/cache \
     -v /opt/aircraft-taxonomy-db/build:/workspace/build \
     -v /opt/aircraft-taxonomy-db/logs:/workspace/logs \
-    plane-alert-db:latest \
+    aircraft-taxonomy-db:latest \
     /bin/bash
 ```
 
@@ -95,7 +95,7 @@ under `/workspace` and can be run using relative paths. For example:
 python scripts/validate_schema.py \
     --lookup taxonomy/aircraft_type_lookup.csv \
     --aliases taxonomy/aircraft_type_aliases.csv \
-    --data-files data/plane-alert-db.csv data/plane-alert-pia.csv
+    --data-files data/aircraft-taxonomy-db.csv data/aircraft-taxonomy-pia.csv
 ```
 
 ---
@@ -107,8 +107,8 @@ python scripts/validate_schema.py \
 1. **Copy the example environment file** and set the repository path:
 
    ```bash
-   sudo cp systemd/plane-alert-weekly.env.example /etc/plane-alert-weekly.env
-   sudo nano /etc/plane-alert-weekly.env
+   sudo cp systemd/aircraft-taxonomy-weekly.env.example /etc/aircraft-taxonomy-weekly.env
+   sudo nano /etc/aircraft-taxonomy-weekly.env
    # Set REPO_DIR to your actual repository path, e.g.:
    # REPO_DIR=/opt/aircraft-taxonomy-db
    ```
@@ -116,8 +116,8 @@ python scripts/validate_schema.py \
 2. **Copy the unit files** to the systemd system directory:
 
    ```bash
-   sudo cp systemd/plane-alert-weekly.service /etc/systemd/system/
-   sudo cp systemd/plane-alert-weekly.timer   /etc/systemd/system/
+   sudo cp systemd/aircraft-taxonomy-weekly.service /etc/systemd/system/
+   sudo cp systemd/aircraft-taxonomy-weekly.timer   /etc/systemd/system/
    ```
 
 3. **Reload the systemd daemon**:
@@ -130,10 +130,10 @@ python scripts/validate_schema.py \
 
 ```bash
 # Enable the timer so it survives reboots.
-sudo systemctl enable plane-alert-weekly.timer
+sudo systemctl enable aircraft-taxonomy-weekly.timer
 
 # Start the timer immediately (without waiting for a reboot).
-sudo systemctl start plane-alert-weekly.timer
+sudo systemctl start aircraft-taxonomy-weekly.timer
 ```
 
 The timer is configured with `Persistent=true`, which means that if the host
@@ -145,7 +145,7 @@ boot instead of being skipped.
 To trigger a one-off run without waiting for the next scheduled time:
 
 ```bash
-sudo systemctl start plane-alert-weekly.service
+sudo systemctl start aircraft-taxonomy-weekly.service
 ```
 
 ---
@@ -155,17 +155,17 @@ sudo systemctl start plane-alert-weekly.service
 ### journald (systemd journal)
 
 All output from the container (stdout + stderr) is captured by journald under
-the identifier `plane-alert-weekly`.
+the identifier `aircraft-taxonomy-weekly`.
 
 ```bash
 # Show the last 200 lines of the most recent run:
-journalctl -u plane-alert-weekly.service -n 200
+journalctl -u aircraft-taxonomy-weekly.service -n 200
 
 # Follow output in real time while the service is running:
-journalctl -u plane-alert-weekly.service -f
+journalctl -u aircraft-taxonomy-weekly.service -f
 
 # Show all historical entries:
-journalctl -u plane-alert-weekly.service --no-pager
+journalctl -u aircraft-taxonomy-weekly.service --no-pager
 ```
 
 ### Persistent log file
@@ -186,17 +186,17 @@ tail -n 100 /opt/aircraft-taxonomy-db/logs/weekly_aircraft_update.log
 
 ```bash
 # Show the timer status, including the last trigger and next scheduled time:
-systemctl status plane-alert-weekly.timer
+systemctl status aircraft-taxonomy-weekly.timer
 
 # List all active timers sorted by next trigger time:
-systemctl list-timers --all | grep plane-alert
+systemctl list-timers --all | grep aircraft-taxonomy
 ```
 
 Example output:
 
 ```
 NEXT                         LEFT          LAST                         PASSED   UNIT                          ACTIVATES
-Sun 2026-04-26 03:15:00 BST  5 days left   Sun 2026-04-19 03:15:00 BST  6 days ago  plane-alert-weekly.timer  plane-alert-weekly.service
+Sun 2026-04-26 03:15:00 BST  5 days left   Sun 2026-04-19 03:15:00 BST  6 days ago  aircraft-taxonomy-weekly.timer  aircraft-taxonomy-weekly.service
 ```
 
 ---
@@ -205,11 +205,11 @@ Sun 2026-04-26 03:15:00 BST  5 days left   Sun 2026-04-19 03:15:00 BST  6 days a
 
 ```bash
 # Stop the timer for this boot only (re-enables on reboot):
-sudo systemctl stop plane-alert-weekly.timer
+sudo systemctl stop aircraft-taxonomy-weekly.timer
 
 # Permanently disable the timer:
-sudo systemctl disable plane-alert-weekly.timer
-sudo systemctl stop plane-alert-weekly.timer
+sudo systemctl disable aircraft-taxonomy-weekly.timer
+sudo systemctl stop aircraft-taxonomy-weekly.timer
 ```
 
 ---
@@ -232,8 +232,8 @@ After each weekly run the following files are updated on the host:
 |---|---|
 | `taxonomy/aircraft_type_lookup.csv` | Updated canonical ICAO type lookup |
 | `taxonomy/aircraft_type_aliases.csv` | Updated canonical aliases |
-| `data/plane-alert-db.csv` | Re-normalised main aircraft database |
-| `data/plane-alert-pia.csv` | Re-normalised PIA database |
-| `data/plane-alert-wip.csv` | Re-normalised WIP database |
+| `data/aircraft-taxonomy-db.csv` | Re-normalised main aircraft database |
+| `data/aircraft-taxonomy-pia.csv` | Re-normalised PIA database |
+| `data/aircraft-taxonomy-wip.csv` | Re-normalised WIP database |
 | `build/weekly_update/weekly_update_manifest.json` | JSON summary of the run |
 | `logs/weekly_aircraft_update.log` | Appended run log |

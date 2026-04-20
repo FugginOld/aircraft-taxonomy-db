@@ -1,4 +1,4 @@
-"""Plane Alert DB – HTTP API
+"""aircraft-taxonomy-db – HTTP API
 
 Serves the CSV databases in /data as a JSON REST API.
 
@@ -44,13 +44,13 @@ DATA_DIR = Path(os.environ.get("DATA_DIR", Path(__file__).parent.parent / "data"
 
 # Databases that can be served via /api/v1/databases/{name}
 _DB_STEMS: dict[str, str] = {
-    "main": "plane-alert-db.csv",
-    "pia": "plane-alert-pia.csv",
-    "civ": "plane-alert-civ.csv",
-    "mil": "plane-alert-mil.csv",
-    "pol": "plane-alert-pol.csv",
-    "gov": "plane-alert-gov.csv",
-    "wip": "plane-alert-wip.csv",
+    "main": "aircraft-taxonomy-db.csv",
+    "pia": "aircraft-taxonomy-pia.csv",
+    "civ": "aircraft-taxonomy-civ.csv",
+    "mil": "aircraft-taxonomy-mil.csv",
+    "pol": "aircraft-taxonomy-pol.csv",
+    "gov": "aircraft-taxonomy-gov.csv",
+    "wip": "aircraft-taxonomy-wip.csv",
 }
 
 # ---------------------------------------------------------------------------
@@ -93,9 +93,9 @@ def _get_main_df() -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 
 app = FastAPI(
-    title="Plane Alert DB API",
+    title="aircraft-taxonomy-db API",
     description=(
-        "REST API for the Plane Alert aircraft database. "
+        "REST API for the aircraft-taxonomy aircraft database. "
         "Returns JSON representations of CSV data files stored in /data."
     ),
     version="1.0.0",

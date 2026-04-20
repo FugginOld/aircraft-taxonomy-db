@@ -11,7 +11,7 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)-8s [%(name)s] %(message)s", level=logging.INFO
 )
 
-MAIN_DATABASE_NAME = "data/plane-alert-db.csv"
+MAIN_DATABASE_NAME = "data/aircraft-taxonomy-db.csv"
 
 
 def is_hex(string):

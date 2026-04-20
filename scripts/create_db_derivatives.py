@@ -1,5 +1,5 @@
 """This script creates derivative category CSV database files from the main
-'plane-alert-db.csv' database file. The categories are created based on the 'CMPG'
+'aircraft-taxonomy-db.csv' database file. The categories are created based on the 'CMPG'
 column.
 """
 
@@ -13,10 +13,10 @@ logging.basicConfig(
 
 if __name__ == "__main__":
     logging.info("Reading the main csv file...")
-    unsort_df = pd.read_csv("data/plane-alert-db.csv")
+    unsort_df = pd.read_csv("data/aircraft-taxonomy-db.csv")
     df = unsort_df.sort_values(by=["$ICAO"], ascending=True)
     df.to_csv(
-        "data/plane-alert-db.csv",
+        "data/aircraft-taxonomy-db.csv",
         mode="wb",
         index=False,
         header=True,
@@ -34,7 +34,7 @@ if __name__ == "__main__":
         logging.info(f"Creating the '{category}' category CSV file...")
         category_df = df[df["#CMPG"] == category]
         category_df.to_csv(
-            f"data/plane-alert-{category.lower()}.csv",
+            f"data/aircraft-taxonomy-{category.lower()}.csv",
             index=False,
             mode="wb",
             encoding="utf8",

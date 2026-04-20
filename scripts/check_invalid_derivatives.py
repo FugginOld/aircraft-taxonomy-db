@@ -13,8 +13,8 @@ logging.basicConfig(
 
 CHANGED_FILES = os.environ["CHANGED_FILES"]
 MAIN_DB_FILES = [
-    "plane-alert-db.csv",
-    "plane-alert-pia.csv",
+    "aircraft-taxonomy-db.csv",
+    "aircraft-taxonomy-pia.csv",
 ]
 OUTPUT_FILE = os.getenv("GITHUB_OUTPUT")
 

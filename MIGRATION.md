@@ -65,7 +65,7 @@ The table below shows how the old personality categories map to the new taxonomy
 | Perfectly Serviceable Aircraft | Utility |
 | Don't you know who I am? | Business Jet |
 | Royal Aircraft | Business Jet or Passenger - Widebody |
-| PIA | *(kept in plane-alert-pia.csv separately)* |
+| PIA | *(kept in aircraft-taxonomy-pia.csv separately)* |
 
 ---
 
@@ -83,7 +83,7 @@ Each aircraft carries up to three structured tags. The old tag fields carried fr
 
 ## What did NOT change
 
-- **`#CMPG`** — The operator-type split (`Mil` / `Civ` / `Gov` / `Pol`) is unchanged. It drives the derivative files (`plane-alert-mil.csv`, `plane-alert-civ.csv`, `plane-alert-gov.csv`, `plane-alert-pol.csv`) and is orthogonal to the taxonomy.
+- **`#CMPG`** — The operator-type split (`Mil` / `Civ` / `Gov` / `Pol`) is unchanged. It drives the derivative files (`aircraft-taxonomy-mil.csv`, `aircraft-taxonomy-civ.csv`, `aircraft-taxonomy-gov.csv`, `aircraft-taxonomy-pol.csv`) and is orthogonal to the taxonomy.
 - **`$ICAO`**, **`$Registration`**, **`$Operator`**, **`$Type`**, **`$ICAO Type`** — All identifier columns are unchanged.
 
 ---
@@ -92,7 +92,7 @@ Each aircraft carries up to three structured tags. The old tag fields carried fr
 
 If you use the `Category` field in your configuration rules, you will need to update your filter values to use the new taxonomy names. The 53 old category names are no longer present in the database.
 
-If you use the `#CMPG` field or the derivative files (`plane-alert-mil.csv`, etc.), no changes are needed.
+If you use the `#CMPG` field or the derivative files (`aircraft-taxonomy-mil.csv`, etc.), no changes are needed.
 
 ---
 
@@ -103,18 +103,18 @@ To apply or extend the taxonomy mapping yourself:
 ```bash
 pip install -r scripts/requirements.txt
 
-python scripts/normalize_aircraft_v5.py data/plane-alert-db.csv \
+python scripts/normalize_aircraft_v5.py data/aircraft-taxonomy-db.csv \
     --lookup taxonomy/aircraft_type_lookup.csv \
     --aliases taxonomy/aircraft_type_aliases.csv
 
 # For a production-ready output without diagnostic columns:
-python scripts/normalize_aircraft_v5.py data/plane-alert-db.csv \
+python scripts/normalize_aircraft_v5.py data/aircraft-taxonomy-db.csv \
     --lookup taxonomy/aircraft_type_lookup.csv \
     --aliases taxonomy/aircraft_type_aliases.csv \
     --no-audit-cols
 ```
 
-- Review `data/plane-alert-db_review.csv` for any rows the normalizer could not classify.
+- Review `data/aircraft-taxonomy-db_review.csv` for any rows the normalizer could not classify.
 - Add missing ICAO types to `taxonomy/aircraft_type_lookup.csv` and re-run.
 - Add free-text type-name variants to `taxonomy/aircraft_type_aliases.csv` and re-run.
 

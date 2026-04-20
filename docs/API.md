@@ -1,4 +1,4 @@
-# Plane Alert DB – HTTP API
+# aircraft-taxonomy-db – HTTP API
 
 The built-in HTTP API exposes supported CSV-backed databases from `data/` as a
 JSON REST API, making them accessible to third-party tools, dashboards, and
@@ -96,7 +96,7 @@ GET /api/v1/databases
 [
   {
     "name": "main",
-    "filename": "plane-alert-db.csv",
+    "filename": "aircraft-taxonomy-db.csv",
     "rows": 15182,
     "columns": ["ICAO", "Registration", "Operator", "Type", "ICAO Type",
                 "CMPG", "Tag 1", "Tag 2", "Tag 3", "Category"]

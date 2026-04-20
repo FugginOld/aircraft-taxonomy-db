@@ -3,8 +3,8 @@ name: Check categories
 on:
   pull_request:
     paths:
-      - "data/plane-alert-db.csv"
-      - "data/plane-alert-pia.csv"
+      - "data/aircraft-taxonomy-db.csv"
+      - "data/aircraft-taxonomy-pia.csv"
 
 jobs:
   checkCategories:

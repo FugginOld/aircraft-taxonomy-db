@@ -21,7 +21,7 @@ from typing import Dict, List, Optional, Tuple
 # NOTE: The '#CMPG' column (Mil / Civ / Gov / Pol operator-type split) is
 #       intentionally left unchanged by this normalizer.  It is orthogonal to
 #       the aviation taxonomy and is used by create_db_derivatives.py to
-#       generate the derivative CSV files (plane-alert-mil.csv, etc.).
+#       generate the derivative CSV files (aircraft-taxonomy-mil.csv, etc.).
 
 ALLOWED_CATEGORIES = {
     "Tactical Airlift",

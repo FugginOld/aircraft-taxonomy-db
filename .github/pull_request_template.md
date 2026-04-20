@@ -12,4 +12,4 @@ PLANE INFO: Please add the sources used to aid the review process.
 ## Checklist before requesting a review
 
 - [ ] I have performed a self-review of my code.
-- [ ] While waiting for someone to review your request, please help review [another open pull request](https://github.com/sdr-enthusiasts/plane-alert-db/pulls) to support the maintainers.
+- [ ] While waiting for someone to review your request, please help review [another open pull request](https://github.com/FugginOld/aircraft-taxonomy-db/pulls) to support the maintainers.

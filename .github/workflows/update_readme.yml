@@ -9,13 +9,13 @@ on:
     paths:
       - "scripts/update_readme.py"
       - "readme.mustache"
-      - "!data/plane-alert-db.csv"
-      - "!data/plane-alert-ukraine.csv"
+      - "!data/aircraft-taxonomy-db.csv"
+      - "!data/aircraft-taxonomy-ukraine.csv"
       - "!scripts/create_db_derivatives.py"
 
 jobs:
   updateREADME:
-    if: github.repository == 'sdr-enthusiasts/plane-alert-db' || ${{ vars.CREATE_DERIVATIVES }}
+    if: github.repository == 'FugginOld/aircraft-taxonomy-db' || ${{ vars.CREATE_DERIVATIVES == 'true' }}
     name: Update README.md documentation for Changes
     runs-on: ubuntu-latest
     steps:

@@ -1,12 +1,12 @@
-# Contributing to plane-alert-db
+# Contributing to aircraft-taxonomy-db
 
 We love your input! 🚀 We want to make contributing to this project as easy and transparent as possible, whether it's:
 
-- [Reporting a bug](https://github.com/sdr-enthusiasts/plane-alert-db/issues/new?assignees=&labels=bug&template=bug_report.yml).
+- [Reporting a bug](https://github.com/FugginOld/aircraft-taxonomy-db/issues/new?assignees=&labels=bug&template=bug_report.yml).
 - Discussing the current state of the code.
-- [Submitting a fix](https://github.com/sdr-enthusiasts/plane-alert-db/compare).
-- [Proposing new features](https://github.com/sdr-enthusiasts/plane-alert-db/issues/new?assignees=&labels=enhancement&template=feature_request.yml).
-- [Reviewing pull requests](https://github.com/sdr-enthusiasts/plane-alert-db/pulls).
+- [Submitting a fix](https://github.com/FugginOld/aircraft-taxonomy-db/compare).
+- [Proposing new features](https://github.com/FugginOld/aircraft-taxonomy-db/issues/new?assignees=&labels=enhancement&template=feature_request.yml).
+- [Reviewing pull requests](https://github.com/FugginOld/aircraft-taxonomy-db/pulls).
 - Adding new planes or images.
 - Becoming a maintainer.
 
@@ -32,7 +32,7 @@ Pull requests are the best way to propose changes to the codebase (we use [Githu
 
 ### Aviation-taxonomy Categories and Tags
 
-New entries in `plane-alert-db.csv` must use the structured aviation-taxonomy values defined below. The old personality / group-category system (USAF, Zoomies, Toy Soldiers, etc.) has been replaced.
+New entries in `aircraft-taxonomy-db.csv` must use the structured aviation-taxonomy values defined below. The old personality / group-category system (USAF, Zoomies, Toy Soldiers, etc.) has been replaced.
 
 **`Category`** — pick exactly one of the 24 taxonomy values:
 
@@ -79,14 +79,14 @@ New entries in `plane-alert-db.csv` must use the structured aviation-taxonomy va
 
 See `scripts/README.md` for guidance on running the normalizer to validate new entries.
 
-- [plane-alert-db.csv](data/plane-alert-db.csv)
-- [plane-alert-pia.csv](data/plane-alert-pia.csv)
+- [aircraft-taxonomy-db.csv](data/aircraft-taxonomy-db.csv)
+- [aircraft-taxonomy-pia.csv](data/aircraft-taxonomy-pia.csv)
 
-Please note that other databases are automatically generated via [GitHub Actions](https://github.com/sdr-enthusiasts/plane-alert-db/actions/workflows/create_db_derivatives.yaml) and should not be manually edited.
+Please note that other databases are automatically generated via [GitHub Actions](https://github.com/FugginOld/aircraft-taxonomy-db/actions/workflows/create_db_derivatives.yaml) and should not be manually edited.
 
 ### Readme Update
 
-The readme is dynamically generated through the [update_readme.yml](https://github.com/sdr-enthusiasts/plane-alert-db/actions/workflows/update_readme.yml) action using the mustache template language and the chevron parser. For any modifications, exclusively edit the [readme.mustache](readme.mustache) file.
+The readme is dynamically generated through the [update_readme.yml](https://github.com/FugginOld/aircraft-taxonomy-db/actions/workflows/update_readme.yml) action using the mustache template language and the chevron parser. For any modifications, exclusively edit the [readme.mustache](readme.mustache) file.
 
 ## Keep your fork up to date
 
@@ -99,9 +99,9 @@ As the [README](README.md) explains, this repository uses GitHub actions to crea
 > **Warning**
 > If you enable the building of the derivative databases on your fork, please use a feature branch (e.g. `patch`) when creating pull requests to the main repository. This will prevent your PR from being flagged as `invalid` since commits made by the [create_db_derivatives.yaml](.github/workflows/create_db_derivatives.yaml) do not re-trigger the PR check actions. You can then merge your changes into your main branch without waiting for the PR to be merged.
 
-## Report bugs using Github's [issues](https://github.com/sdr-enthusiasts/plane-alert-db/issues)
+## Report bugs using Github's [issues](https://github.com/FugginOld/aircraft-taxonomy-db/issues)
 
-We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/sdr-enthusiasts/plane-alert-db/issues/new/choose); it's that easy!
+We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/FugginOld/aircraft-taxonomy-db/issues/new/choose); it's that easy!
 
 ## Write bug reports with detail, background, and sample code
 

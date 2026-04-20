@@ -1,6 +1,6 @@
 # To do / Ideas
 
-You can checkout [these feature requests](https://github.com/sdr-enthusiasts/plane-alert-db/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement) or [bug reports](https://github.com/sdr-enthusiasts/plane-alert-db/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement+label%3Abug) if you want to improve this repository. Additionally, below are some other ideas you can implement:
+You can checkout [these feature requests](https://github.com/FugginOld/aircraft-taxonomy-db/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement) or [bug reports](https://github.com/FugginOld/aircraft-taxonomy-db/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement+label%3Abug) if you want to improve this repository. Additionally, below are some other ideas you can implement:
 
 > **No 1 - Update USAF aircraft to use Reg/serial number in place of Ident/Callsign.**
 
