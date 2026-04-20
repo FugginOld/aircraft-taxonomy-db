@@ -3,7 +3,8 @@
 #
 # Performs the full weekly pipeline:
 #   1. Download fresh public aircraft reference data into cache/public_sources/
-#   2. Run the taxonomy update pipeline (expand → validate → promote → normalise)
+#   2. Expand aliases, validate and auto-promote taxonomy references
+#   3. Re-normalise data/plane-alert-*.csv when references have changed
 #
 # All output is written to both stdout/stderr (captured by journald when run
 # via the systemd service) and appended to logs/weekly_aircraft_update.log
@@ -27,9 +28,6 @@ exec > >(tee -a "${LOG_FILE}") 2>&1
 echo "========================================"
 echo "Plane Alert weekly update started: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 echo "========================================"
-
-python "${WORKSPACE}/scripts/sync_public_aircraft_sources.py" \
-    --cache-dir "${WORKSPACE}/cache/public_sources"
 
 python "${WORKSPACE}/scripts/weekly_update_pipeline_v3.py" \
     --workspace "${WORKSPACE}" \

@@ -1,6 +1,6 @@
 [Unit]
 Description=Plane Alert DB weekly taxonomy update timer
-Documentation=https://github.com/FugginOld/plane-alert-db-normalized/blob/main/docs/DOCKER.md
+Documentation=docs/DOCKER.md
 
 [Timer]
 # Run every Sunday at 03:15 local time (matches scripts/aircraft_update_cron.example).

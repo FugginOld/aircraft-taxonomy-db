@@ -1,15 +1,17 @@
 [Unit]
 Description=Plane Alert DB weekly taxonomy update
-Documentation=https://github.com/FugginOld/plane-alert-db-normalized/blob/main/docs/DOCKER.md
-After=docker.service
+Documentation=docs/DOCKER.md
+Wants=network-online.target
+After=docker.service network-online.target
 Requires=docker.service
 
 [Service]
 Type=oneshot
+TimeoutStartSec=0
 
 # Path to the cloned repository on the host.
 # Create /etc/plane-alert-weekly.env and set REPO_DIR before enabling.
-# Example: REPO_DIR=/opt/plane-alert-db-normalized
+# Example: REPO_DIR=/opt/plane-alert-db
 EnvironmentFile=/etc/plane-alert-weekly.env
 
 # Remove the container after the run completes.

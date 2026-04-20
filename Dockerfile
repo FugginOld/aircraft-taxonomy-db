@@ -1,6 +1,6 @@
 FROM python:3.10-slim
 
-# git is required by gitpython (used by sync_public_aircraft_sources.py)
+# git is required for repository operations (e.g. gitpython used by pipeline scripts).
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
     && rm -rf /var/lib/apt/lists/*

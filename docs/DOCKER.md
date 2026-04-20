@@ -34,7 +34,7 @@ and on the weekly schedule (every Sunday at 03:15 local time).
 | Cloned repository | `git clone https://github.com/FugginOld/plane-alert-db-normalized.git` |
 
 All commands below assume you have cloned the repository to
-`/opt/plane-alert-db-normalized` (adjust the path to match your environment).
+`/opt/plane-alert-db` (adjust the path to match your environment).
 
 ---
 
@@ -43,7 +43,7 @@ All commands below assume you have cloned the repository to
 Run from the **repository root**:
 
 ```bash
-cd /opt/plane-alert-db-normalized
+cd /opt/plane-alert-db
 docker build -t plane-alert-db:latest .
 ```
 
@@ -57,21 +57,21 @@ are persisted automatically.
 
 ## Run the weekly update once (manual)
 
-Replace `/opt/plane-alert-db-normalized` with your actual repo path:
+Replace `/opt/plane-alert-db` with your actual repo path:
 
 ```bash
 docker run --rm \
-    -v /opt/plane-alert-db-normalized/data:/workspace/data \
-    -v /opt/plane-alert-db-normalized/taxonomy:/workspace/taxonomy \
-    -v /opt/plane-alert-db-normalized/cache:/workspace/cache \
-    -v /opt/plane-alert-db-normalized/build:/workspace/build \
-    -v /opt/plane-alert-db-normalized/logs:/workspace/logs \
+    -v /opt/plane-alert-db/data:/workspace/data \
+    -v /opt/plane-alert-db/taxonomy:/workspace/taxonomy \
+    -v /opt/plane-alert-db/cache:/workspace/cache \
+    -v /opt/plane-alert-db/build:/workspace/build \
+    -v /opt/plane-alert-db/logs:/workspace/logs \
     plane-alert-db:latest \
     /workspace/docker/weekly_update.sh
 ```
 
 Output is written to both the terminal and
-`/opt/plane-alert-db-normalized/logs/weekly_aircraft_update.log`.
+`/opt/plane-alert-db/logs/weekly_aircraft_update.log`.
 
 ---
 
@@ -79,17 +79,17 @@ Output is written to both the terminal and
 
 ```bash
 docker run --rm -it \
-    -v /opt/plane-alert-db-normalized/data:/workspace/data \
-    -v /opt/plane-alert-db-normalized/taxonomy:/workspace/taxonomy \
-    -v /opt/plane-alert-db-normalized/cache:/workspace/cache \
-    -v /opt/plane-alert-db-normalized/build:/workspace/build \
-    -v /opt/plane-alert-db-normalized/logs:/workspace/logs \
+    -v /opt/plane-alert-db/data:/workspace/data \
+    -v /opt/plane-alert-db/taxonomy:/workspace/taxonomy \
+    -v /opt/plane-alert-db/cache:/workspace/cache \
+    -v /opt/plane-alert-db/build:/workspace/build \
+    -v /opt/plane-alert-db/logs:/workspace/logs \
     plane-alert-db:latest \
     /bin/bash
 ```
 
-Inside the shell all scripts are available on `$PATH` relative to `/workspace`,
-which is the working directory.  For example:
+Inside the shell, `/workspace` is the working directory, so scripts are available
+under `/workspace` and can be run using relative paths. For example:
 
 ```bash
 python scripts/validate_schema.py \
@@ -110,7 +110,7 @@ python scripts/validate_schema.py \
    sudo cp systemd/plane-alert-weekly.env.example /etc/plane-alert-weekly.env
    sudo nano /etc/plane-alert-weekly.env
    # Set REPO_DIR to your actual repository path, e.g.:
-   # REPO_DIR=/opt/plane-alert-db-normalized
+   # REPO_DIR=/opt/plane-alert-db
    ```
 
 2. **Copy the unit files** to the systemd system directory:
@@ -173,11 +173,11 @@ journalctl -u plane-alert-weekly.service --no-pager
 Each run also appends a timestamped record to the log file on the host:
 
 ```
-/opt/plane-alert-db-normalized/logs/weekly_aircraft_update.log
+/opt/plane-alert-db/logs/weekly_aircraft_update.log
 ```
 
 ```bash
-tail -n 100 /opt/plane-alert-db-normalized/logs/weekly_aircraft_update.log
+tail -n 100 /opt/plane-alert-db/logs/weekly_aircraft_update.log
 ```
 
 ---
