@@ -1,8 +1,4 @@
 documentation:
-  - any:
-      - changed-files:
-          - any-glob-to-any-file: [readme.mustache]
+  - readme.mustache
 planes:
-  - all:
-      - changed-files:
-          - any-glob-to-any-file: ['*.csv']
+  - '*.csv'
