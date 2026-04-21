@@ -16,6 +16,10 @@ name: Import custom aircraft submissions
 permissions:
   contents: write
 
+concurrency:
+  group: import-custom-db
+  cancel-in-progress: false
+
 on:
   push:
     branches: ["main"]

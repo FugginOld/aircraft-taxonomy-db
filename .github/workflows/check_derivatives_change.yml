@@ -25,6 +25,7 @@ jobs:
             data/*.csv
             !data/aircraft-taxonomy-db.csv
             !data/aircraft-taxonomy-pia.csv
+            !data/aircraft-taxonomy-custom-db.csv
           separator: ","
 
       - uses: actions/setup-python@v6.2.0

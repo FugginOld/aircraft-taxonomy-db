@@ -6,8 +6,10 @@ Checks
 1. The file is a well-formed CSV with the required column headers.
 2. Every ``$ICAO`` value is a valid hexadecimal string.
 3. There are no duplicate ``$ICAO`` codes within the submission file.
-4. Every ``Category`` value appears in the canonical category list
-   (``data/aircraft-taxonomy-categories.csv``).
+4. Every non-empty ``Category`` value appears in the canonical allowlist
+   (``scripts/taxonomy_constants.ALLOWED_CATEGORIES``).  Empty Category is
+   permitted — the post-merge normaliser will attempt to fill it from the
+   taxonomy lookup table.
 
 Exit codes
 ----------
@@ -27,7 +29,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 CUSTOM_DB = Path("data/aircraft-taxonomy-custom-db.csv")
-CATEGORIES_FILE = Path("data/aircraft-taxonomy-categories.csv")
 
 REQUIRED_COLUMNS = {
     "$ICAO",
@@ -51,14 +52,13 @@ def _is_hex(value: str) -> bool:
         return False
 
 
-def _load_valid_categories(path: Path) -> set[str]:
-    categories: set[str] = set()
-    with path.open(encoding="utf-8-sig", newline="") as fh:
-        for row in csv.DictReader(fh):
-            cat = (row.get("Category") or "").strip()
-            if cat:
-                categories.add(cat)
-    return categories
+def _load_allowed_categories() -> set[str]:
+    """Return the canonical category allowlist from taxonomy_constants."""
+    scripts_dir = str(Path(__file__).parent.resolve())
+    if scripts_dir not in sys.path:
+        sys.path.insert(0, scripts_dir)
+    from taxonomy_constants import ALLOWED_CATEGORIES  # noqa: PLC0415
+    return set(ALLOWED_CATEGORIES)
 
 
 def main() -> int:
@@ -128,20 +128,27 @@ def main() -> int:
             logger.error("  row %d: %s (first seen at row %d)", line_num, icao, seen[icao])
 
     # ------------------------------------------------------------------
-    # Check 4: all Category values are in the canonical list
+    # Check 4: non-empty Category values must be in the canonical allowlist
+    # Empty Category is allowed — the normaliser fills it from the lookup.
     # ------------------------------------------------------------------
-    if not CATEGORIES_FILE.exists():
-        logger.warning("Category list not found (%s) — skipping category check.", CATEGORIES_FILE)
-    else:
-        valid_categories = _load_valid_categories(CATEGORIES_FILE)
+    try:
+        allowed_categories = _load_allowed_categories()
+    except Exception as exc:
+        logger.warning("Could not load taxonomy_constants — skipping category check: %s", exc)
+        allowed_categories = None
+
+    if allowed_categories is not None:
         invalid_categories: list[tuple[int, str]] = [
             (i + 2, row.get("Category", ""))
             for i, row in enumerate(rows)
-            if (row.get("Category") or "").strip() not in valid_categories
+            if (category := (row.get("Category") or "").strip())
+            and category not in allowed_categories
         ]
         if invalid_categories:
             failed = True
-            logger.error("Invalid Category values (not in %s):", CATEGORIES_FILE)
+            logger.error(
+                "Invalid Category values (not in the canonical taxonomy allowlist):"
+            )
             for line_num, cat in invalid_categories:
                 logger.error("  row %d: %r", line_num, cat)
 
