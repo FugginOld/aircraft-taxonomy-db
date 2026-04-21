@@ -1,0 +1,32 @@
+name: Check custom aircraft submissions
+
+# Validates data/aircraft-taxonomy-custom-db.csv whenever a pull request
+# touches that file. Catches formatting errors before they reach main so the
+# import step can run cleanly after merge.
+
+on:
+  pull_request:
+    paths:
+      - "data/aircraft-taxonomy-custom-db.csv"
+
+permissions:
+  contents: read
+
+jobs:
+  checkCustomDb:
+    runs-on: ubuntu-latest
+    name: Validate custom aircraft submission format
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - uses: actions/setup-python@v6.2.0
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r ./scripts/requirements.txt
+
+      - name: Validate custom aircraft submissions
+        run: python ./scripts/check_custom_db.py

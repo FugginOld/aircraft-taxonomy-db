@@ -134,7 +134,11 @@ def main() -> int:
     )
     refs_changed = aliases_changed or lookup_changed
 
-    SKIP_DATA_STEMS = {"aircraft-taxonomy-categories", "aircraft-taxonomy-search-terms-to-do"}
+    SKIP_DATA_STEMS = {
+        "aircraft-taxonomy-categories",
+        "aircraft-taxonomy-custom-db",
+        "aircraft-taxonomy-search-terms-to-do",
+    }
     plane_files = sorted(
         f for f in ws.glob("data/aircraft-taxonomy-*.csv")
         if f.stem not in SKIP_DATA_STEMS
