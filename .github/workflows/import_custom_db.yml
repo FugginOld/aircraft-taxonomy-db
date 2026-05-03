@@ -1,0 +1,71 @@
+name: Import custom aircraft submissions
+
+# Runs automatically when data/aircraft-taxonomy-custom-db.csv is updated on
+# the main branch (i.e. after a PR containing custom submissions is merged).
+#
+# Workflow
+# 1. Check whether the inbox file contains any data rows.
+# 2. If it does, normalise the rows with the published taxonomy lookup/aliases.
+# 3. Deduplicate against data/aircraft-taxonomy-db.csv (keyed on $ICAO).
+# 4. Append new, normalised rows to data/aircraft-taxonomy-db.csv.
+# 5. Move any review-required rows to review/.
+# 6. Reset data/aircraft-taxonomy-custom-db.csv to header-only.
+# 7. Commit — this in turn triggers create_db_derivatives.yaml to regenerate
+#    the derivative files.
+
+permissions:
+  contents: write
+
+concurrency:
+  group: import-custom-db
+  cancel-in-progress: false
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "data/aircraft-taxonomy-custom-db.csv"
+
+jobs:
+  importCustomDb:
+    if: ${{ github.repository == 'FugginOld/aircraft-taxonomy-db' || vars.IMPORT_CUSTOM_DB == 'true' }}
+    name: Import custom aircraft submissions into main database
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6.2.0
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r ./scripts/requirements.txt
+
+      - name: Check for pending submissions
+        id: check
+        run: |
+          count=$(tail -n +2 data/aircraft-taxonomy-custom-db.csv | grep -c '[^[:space:]]' || true)
+          echo "row_count=$count" >> "$GITHUB_OUTPUT"
+          echo "Pending submissions: $count"
+
+      - name: Import custom aircraft submissions
+        if: ${{ steps.check.outputs.row_count > 0 }}
+        run: |
+          python ./scripts/import_custom_db.py \
+            --custom-db data/aircraft-taxonomy-custom-db.csv \
+            --main-db data/aircraft-taxonomy-db.csv \
+            --lookup taxonomy/aircraft_type_lookup.csv \
+            --aliases taxonomy/aircraft_type_aliases.csv \
+            --review-dir review
+
+      - name: Commit import results
+        if: ${{ steps.check.outputs.row_count > 0 }}
+        uses: stefanzweifel/git-auto-commit-action@v7.1.0
+        with:
+          commit_message: "feat: import custom aircraft submissions"
+          file_pattern: |
+            data/aircraft-taxonomy-db.csv
+            data/aircraft-taxonomy-custom-db.csv
+            review/aircraft-taxonomy-custom-db_review.csv

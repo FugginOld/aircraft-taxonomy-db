@@ -17,7 +17,7 @@ jobs:
     if: github.event.workflow_run.event == 'pull_request'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v6
         with:
           persist-credentials: true
 
@@ -60,21 +60,21 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const issueNumber = Number.parseInt(process.env.ISSUE_NUMBER || "", 10);
-            if (!Number.isInteger(issueNumber) || issueNumber <= 0) {
-              throw new Error("Invalid issue number from artifact output");
-            }
-            try {
-              await github.rest.issues.removeLabel({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issueNumber,
-                name: 'invalid'
-              });
-            } catch (err) {
-              if (err.status === 404 && err.message === "Label does not exist") {
-                console.log("Label not found");
-              } else {
-                throw err;
+             const issueNumber = Number.parseInt(process.env.ISSUE_NUMBER || "", 10);
+             if (!Number.isInteger(issueNumber) || issueNumber <= 0) {
+               throw new Error("Invalid issue number from artifact output");
+             }
+             try {
+               await github.rest.issues.removeLabel({
+                 owner: context.repo.owner,
+                 repo: context.repo.repo,
+                 issue_number: issueNumber,
+                 name: 'invalid'
+               });
+              } catch (err) {
+                if (err.status === 404) {
+                  console.log("Label not found, nothing to remove.");
+                } else {
+                  throw err;
+                }
               }
-            }
