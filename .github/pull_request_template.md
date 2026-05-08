@@ -1,57 +1,23 @@
-# Pull Request
+## Summary
 
-## Linked Issue
+<!-- One sentence. What does this PR do? -->
 
 Closes #
 
-## Summary
+## Changes
 
-- 
-
-## Type of Change
-
-- [ ] Bug fix
-- [ ] Feature
-- [ ] Refactor
-- [ ] Documentation
-- [ ] Tests
-- [ ] Generated files
-
-## AI Workflow Checklist
-
-- [ ] Followed `AGENTS.md`
-- [ ] Checked `CONTEXT.md`
-- [ ] Worked on one focused issue
-- [ ] Used branch `agent/<issue-number>-short-name`
-- [ ] Added or updated tests, or documented why not
-- [ ] Ran local checks
-- [ ] Ran `/diagnose` or equivalent review
-- [ ] Updated docs if behavior or terminology changed
-- [ ] Added ADR if architecture changed
-
-## Tests Run
-
-```bash
-# paste commands here
-```
-
-## Results
+<!-- List changed files and what changed in each. -->
 
 ```text
-# paste relevant output summary here
+Changed files:
+Commands run:
+Tests passing:
 ```
 
-## Risk Level
+## Risks
 
-- [ ] Low
-- [ ] Medium
-- [ ] High
-
-## Risks / Notes
-
-- 
+<!-- Any assumptions, edge cases, or areas with reduced test coverage. -->
 
 ## Rollback Plan
 
-- Revert this PR.
-- Additional rollback steps: TODO
+<!-- How to revert if this causes issues in production. -->

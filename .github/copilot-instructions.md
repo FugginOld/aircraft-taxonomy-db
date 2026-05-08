@@ -1,7 +1,7 @@
 # context-mode — MANDATORY routing rules
 
-<!-- Source: https://github.com/FugginOld/ai-config/blob/main/global/AGENTS.md -->
-<!-- context-mode rules MUST remain first. Do not move or prepend. -->
+<!-- Source: https://github.com/FugginOld/ai-config/blob/main/global/copilot-instructions.md -->
+<!-- Kept in sync with AGENTS.md. context-mode rules MUST remain first. -->
 <!-- Core rules: https://github.com/FugginOld/ai-config/tree/main/core/ -->
 
 context-mode MCP tools available. Rules protect context window from flooding. One unrouted command dumps 56 KB into context. Codex CLI has NO hooks — these instructions are ONLY enforcement. Follow strictly.
@@ -13,33 +13,27 @@ Analyze/count/filter/compare/search/parse/transform data: **write code** via `ct
 ## BLOCKED — do NOT use
 
 ### curl / wget — FORBIDDEN
-
 Do NOT use `curl`/`wget` in shell. Dumps raw HTTP into context.
 Use: `ctx_fetch_and_index(url, source)` or `ctx_execute(language: "javascript", code: "const r = await fetch(...)")`
 
 ### Inline HTTP — FORBIDDEN
-
 No `node -e "fetch(..."`, `python -c "requests.get(..."`. Bypasses sandbox.
 Use: `ctx_execute(language, code)` — only stdout enters context
 
 ### Direct web fetching — FORBIDDEN
-
 Raw HTML can exceed 100 KB.
 Use: `ctx_fetch_and_index(url, source)` then `ctx_search(queries)`
 
 ## REDIRECTED — use sandbox
 
 ### Shell (>20 lines output)
-
 Shell ONLY for: `git`, `mkdir`, `rm`, `mv`, `cd`, `ls`, `npm install`, `pip install`.
 Otherwise: `ctx_batch_execute(commands, queries)` or `ctx_execute(language: "shell", code: "...")`
 
 ### File reading (for analysis)
-
 Reading to **edit** → reading correct. Reading to **analyze/explore/summarize** → `ctx_execute_file(path, language, code)`.
 
 ### grep / search (large results)
-
 Use `ctx_execute(language: "shell", code: "grep ...")` in sandbox.
 
 ## Tool selection
@@ -79,7 +73,7 @@ Skills, roles, and decisions persist for the entire session. Do not abandon them
 Session history is persistent and searchable. On resume, search BEFORE asking the user:
 
 | Need | Command |
-| ------ | --------- |
+|------|---------|
 | What were we working on? | `ctx_search(queries: ["summary"], source: "compaction", sort: "timeline")` |
 | What did we decide? | `ctx_search(queries: ["decision"], source: "decision", sort: "timeline")` |
 | What NOT to repeat? | `ctx_search(queries: ["rejected"], source: "rejected-approach")` |
@@ -93,7 +87,7 @@ If search returns 0 results, proceed as a fresh session.
 ## ctx commands
 
 | Command | Action |
-| --------- | -------- |
+|---------|--------|
 | `ctx stats` | Call `stats` MCP tool, display full output verbatim |
 | `ctx doctor` | Call `doctor` MCP tool, run returned shell command, display as checklist |
 | `ctx upgrade` | Call `upgrade` MCP tool, run returned shell command, display as checklist |
@@ -113,7 +107,7 @@ After /clear or /compact: knowledge base and session stats preserved. Use `ctx p
 
 ---
 
-## Global AI Workflow Rules
+# Global AI Workflow Rules
 
 <!-- Shared core. Edit at: https://github.com/FugginOld/ai-config/blob/main/core/workflow-core.md -->
 <!-- To update: edit core file, then re-sync this block. -->
@@ -147,7 +141,6 @@ For non-trivial changes:
 ## Token Efficiency Rules
 
 Avoid:
-
 - full logs
 - large pasted outputs
 - unnecessary file reads
@@ -155,7 +148,6 @@ Avoid:
 - broad recursive scans without filtering
 
 Prefer:
-
 - summaries
 - targeted reads
 - concise diffs
@@ -167,7 +159,6 @@ Prefer:
 ## File Reading Rules
 
 Before opening large files:
-
 1. Search/index first
 2. Identify relevant sections
 3. Read only necessary portions
@@ -178,7 +169,6 @@ Before opening large files:
 ## Architecture Workflow
 
 For unfamiliar repos:
-
 1. Identify entrypoints
 2. Identify build/test system
 3. Identify dependency structure

@@ -1,76 +1,33 @@
-# AI Usage Budget
+# Agent Routing & Usage Budget
 
-## Purpose
+## Agent Role Assignments
 
-This file prevents session limits and rate limits by assigning the right work to the right AI tool.
+| Agent | Role | Use For | Avoid |
+|-------|------|---------|-------|
+| Claude Pro | Scarce reasoning | Architecture, planning, review | Long coding loops |
+| ChatGPT Plus / Codex | Implementation | Tests, code, debugging, scripts | Repeated broad planning |
+| GitHub Copilot Pro | Local assist | Autocomplete, small edits, boilerplate | Full repo analysis, architecture |
 
-## Default Agent Budget
+---
 
-| Agent | Budget Role | Use For | Avoid |
-|---|---|---|---|
-| Claude Pro | scarce reasoning | architecture, planning, review | long coding loops |
-| ChatGPT Plus / Codex | implementation | tests, code, debugging | repeated broad planning |
-| GitHub Copilot Pro | local assist | autocomplete, small edits | full repo analysis |
+## Claude — Context Rules
 
-## Claude Rules
-
-Claude should receive only:
-
+Send only:
 - `AGENTS.md`
 - `CONTEXT.md`
-- issue text
-- changed file list
-- selected affected files only when needed
-- test output
+- Issue text
+- Changed file list
+- Selected affected files (when needed)
+- Test output
 - `git diff`
 
-Do not give Claude:
+Do NOT send:
+- Entire repo dumps
+- Generated files (unless directly relevant)
+- Repeated full context after every change
+- Long terminal logs without trimming
 
-- entire repo dumps
-- generated files unless relevant
-- repeated full context after every change
-- long terminal logs without trimming
-
-## Codex / ChatGPT Rules
-
-Use Codex or ChatGPT for:
-
-- implementation
-- test writing
-- repeated test/fix loops
-- scripts
-- mechanical cleanup
-- local verification
-
-Codex should always summarize:
-
-```text
-Changed files:
-Commands run:
-Tests passing:
-Known risks:
-Next recommended step:
-```
-
-## Copilot Rules
-
-Use Copilot for:
-
-- inline suggestions
-- boilerplate
-- simple completion
-- repetitive edits
-
-Avoid Copilot Chat for:
-
-- architecture decisions
-- full repo review
-- large context analysis
-- PRD creation
-
-## Session-Saving Prompt for Claude
-
-Use this when starting a Claude session:
+### Session-Saving Prompt
 
 ```text
 Use AGENTS.md and CONTEXT.md.
@@ -86,7 +43,27 @@ Task:
 Review only this diff for correctness, missing tests, architecture conflicts, and merge risk.
 ```
 
-## Session-Saving Prompt for Codex
+---
+
+## Codex / ChatGPT — Usage Rules
+
+Use for:
+- Implementation
+- Test writing
+- Repeated test/fix loops
+- Scripts and mechanical cleanup
+- Local verification
+
+Always summarize on completion:
+```text
+Changed files:
+Commands run:
+Tests passing:
+Known risks:
+Next recommended step:
+```
+
+### Session-Saving Prompt
 
 ```text
 Use AGENTS.md and CONTEXT.md.
@@ -98,20 +75,36 @@ Run available checks.
 Return changed files, commands run, and remaining risks.
 ```
 
+---
+
+## Copilot — Usage Rules
+
+Use for:
+- Inline suggestions
+- Boilerplate
+- Simple completion
+- Repetitive edits
+
+Avoid for:
+- Architecture decisions
+- Full repo review
+- Large context analysis
+- PRD or issue creation
+
+---
+
 ## Escalation Rules
 
-Escalate from Codex to Claude only when:
+### Escalate Codex → Claude ONLY when:
+- Architecture is unclear
+- Tests conflict with expected behavior
+- Requirements are ambiguous
+- Change affects multiple subsystems
+- An ADR may be needed
 
-- architecture is unclear
-- tests conflict with expected behavior
-- requirements are ambiguous
-- a change affects multiple subsystems
-- an ADR may be needed
-
-Do not escalate for:
-
-- syntax errors
-- normal test failures
-- formatting
-- import fixes
-- boilerplate
+### Do NOT escalate for:
+- Syntax errors
+- Normal test failures
+- Formatting
+- Import fixes
+- Boilerplate

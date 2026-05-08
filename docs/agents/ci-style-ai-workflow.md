@@ -2,233 +2,272 @@
 
 ## Purpose
 
-This workflow makes AI-assisted changes predictable, reviewable, and safe across repos while reducing Claude, ChatGPT, Codex, and Copilot session usage.
+Enforces a **repeatable, low-token, high-quality AI development process**.
 
-Required flow:
+Ensures:
+- predictable changes
+- strict scope control
+- proper agent usage
+- minimal token waste
+- safe, test-driven delivery
+
+---
+
+## Workflow Overview (Mandatory Order)
 
 ```text
-Context → Plan → Issue → Branch → Test → Change → Diagnose → Review → Merge
+Context -> Plan -> Issue -> Branch -> Test -> Change
+-> Diagnose -> Review -> PR -> Merge
 ```
 
-## Gate 0 — Repo Setup
+Agents MUST NOT skip steps.
 
-Run once per repo:
+---
 
+## Gate 0 — Repo Setup (Run Once)
+
+Command:
 ```text
 /setup-matt-pocock-skills
 ```
 
-Confirm these files exist:
-
+Verify files exist:
 ```text
 AGENTS.md
 CONTEXT.md
-docs/agents/
+docs/agents/ci-style-ai-workflow.md
+docs/agents/ai-usage-budget.md
+docs/agents/agent-handoff-template.md
 docs/adr/
-.github/pull_request_template.md
-.github/ISSUE_TEMPLATE/ai-task.md
+.github templates
 ```
 
-Pass condition:
+Pass condition: Repo is AI-ready. Workflow + rules enforced.
 
-- repo has agent instructions
-- repo has domain context
-- repo has PR and issue templates
+---
 
-## Gate 1 — Context
+## Gate 1 — Context (Claude)
 
-Use Claude or ChatGPT:
-
+Commands:
 ```text
 /caveman lite
 /grill-with-docs
 /zoom-out
 ```
 
-Required result:
+Prompt:
+```text
+Use AGENTS.md and CONTEXT.md.
 
-- affected files identified
-- domain terms checked against `CONTEXT.md`
-- relevant architecture decisions reviewed
-- smallest useful change identified
+Identify:
+- affected files
+- domain terminology
+- related architecture decisions
+- smallest safe change
 
-Pass condition:
+Do NOT propose implementation yet.
+```
 
-- scope is clear
-- no unknown domain terms remain
-- no architecture conflict ignored
+Pass condition: Scope clearly defined. No unknown domain terms. No architecture conflicts ignored.
 
-## Gate 2 — Issue
+---
 
-For non-trivial work:
+## Gate 2 — Plan → Issue (Claude)
 
+Commands:
 ```text
 /to-prd
 /to-issues
 ```
 
-Each issue must include:
+Prompt:
+```text
+Break this work into the smallest independent issue.
 
+Include:
 - problem
 - acceptance criteria
-- likely files touched
-- tests expected
-- risk level
-- rollback note
+- files likely touched
+- tests required
+- risks
+- rollback plan
 
-Pass condition:
+Do NOT combine multiple concerns.
+```
 
-- issue is independently completable
-- issue is small enough for one branch
+Pass condition: Issue is independently completable. Fits in one branch. Has clear acceptance criteria.
 
-## Gate 3 — Branch
+---
 
-Create a branch:
+## Gate 3 — Branch (Human or Codex)
 
 ```bash
 git checkout -b agent/<issue-number>-short-name
 ```
 
-Pass condition:
+Rules: One branch per issue. Clean working tree required.
 
-- branch is tied to one issue
-- working tree was clean before starting
+---
 
-## Gate 4 — Test-Driven Implementation
+## Gate 4 — TDD Loop (Codex / ChatGPT)
 
-Use Codex/ChatGPT for implementation:
-
+Commands:
 ```text
 /caveman full
 /tdd
 ```
 
-Required loop:
+Prompt:
+```text
+Use AGENTS.md and CONTEXT.md.
 
-1. write or identify failing test
-2. run test and confirm failure when practical
-3. implement smallest fix
-4. run test and confirm pass
-5. refactor only if tests stay green
+Work only on this issue.
 
-Pass condition:
+Loop:
+1. Write or identify failing test
+2. Run test and confirm failure
+3. Implement smallest possible fix
+4. Run test and confirm pass
+5. Refactor only if tests stay green
 
-- tests added or reason documented
-- no unrelated rewrite
-- no unrelated formatting churn
+Do NOT:
+- modify unrelated files
+- redesign architecture
+- skip tests unless justified
+```
 
-## Gate 5 — Diagnose
+Pass condition: Tests exist or justification provided. Smallest change implemented. No scope creep.
 
-Use Codex/ChatGPT first:
+---
 
+## Gate 5 — Diagnose (Codex → Claude if needed)
+
+Command:
 ```text
 /diagnose
 ```
 
+Prompt:
+```text
+Validate this change.
+
 Check:
+- expected behavior
+- edge cases
+- regressions
+- assumptions
 
-- bug reproduced or feature verified
-- edge cases considered
-- assumptions listed
-- regression tests exist where practical
-- command output reviewed
+List any risks or gaps.
+```
 
-Pass condition:
+Pass condition: No unresolved blockers. Critical paths tested. Risks identified.
 
-- no unresolved blocker
-- no untested critical path
+---
 
-## Gate 6 — Architecture Check
+## Gate 6 — Architecture Check (Claude, if needed)
 
-Use only for medium or large changes:
-
+Command:
 ```text
 /improve-codebase-architecture
 ```
 
-Ask:
-
+Prompt:
 ```text
-Did this change improve structure, preserve behavior, avoid duplication, and follow CONTEXT.md vocabulary?
+Evaluate ONLY if needed.
+
+Did this change:
+- preserve behavior?
+- avoid duplication?
+- align with CONTEXT.md?
+- introduce unnecessary abstraction?
+
+Reject overengineering.
 ```
 
-Pass condition:
+Pass condition: No unnecessary abstraction. No duplication introduced. No ADR conflicts.
 
-- no unnecessary abstraction
-- no duplicated core logic
-- no ADR conflict
+---
 
-## Gate 7 — Local CI
-
-Run all relevant checks.
-
-Common examples:
+## Gate 7 — Local CI (Codex / Human)
 
 ```bash
 git status
 npm test
 npm run lint
-npm run typecheck
 pytest
 ruff check .
 mypy .
-go test ./...
-cargo test
 ```
 
-Pass condition:
+Pass condition: All checks pass. Failures fixed or documented.
 
-- all available checks pass
-- failures are fixed or documented
+---
 
-## Gate 8 — Review
+## Gate 8 — Final Review (Claude)
 
-Use Claude only for final high-value review when possible:
-
+Commands:
 ```text
 /caveman lite
 /diagnose
 ```
 
-Review prompt:
-
+Prompt:
 ```text
-Review this diff only. Block the PR for correctness issues, missing tests, risky assumptions, unnecessary complexity, or architecture conflicts. Do not re-read the whole repo unless required.
+Use AGENTS.md.
+
+Review ONLY this diff.
+
+Block for:
+- correctness issues
+- missing tests
+- risky assumptions
+- unnecessary complexity
+- architecture conflicts
+
+Do NOT review entire repo.
 ```
 
-Pass condition:
+Pass condition: Issues resolved. Risks documented.
 
-- review findings resolved
-- remaining risks documented in PR
+---
 
 ## Gate 9 — Pull Request
-
-Create PR:
 
 ```bash
 gh pr create --fill
 ```
 
-PR must include:
+PR must include: linked issue, summary, tests run, risks, rollback plan.
 
-- linked issue
-- summary
-- tests run
-- risks
-- rollback plan
+---
 
 ## Gate 10 — Merge
-
-Before merge:
 
 ```bash
 git status
 git pull --rebase
 ```
 
-Merge only when:
+Merge only if: acceptance criteria met, tests pass, review complete, no unresolved comments.
 
-- issue acceptance criteria are met
-- tests pass
-- no unresolved review comments remain
-- branch has one focused change
+---
+
+## Agent Role Summary
+
+| Agent | Gates |
+|-------|-------|
+| Claude | 1, 2, 6, 8 (planning, architecture, review) |
+| Codex / ChatGPT | 4, 5, 7 (implementation, testing, debugging) |
+| Copilot | Inline assistance only |
+
+For escalation rules, see: `core/agent-routing.md`
+
+---
+
+## Core Principles
+
+- Small changes win
+- Tests validate behavior
+- Scope must stay tight
+- Tokens are limited → use them intentionally
+- Workflow discipline > speed

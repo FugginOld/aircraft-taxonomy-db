@@ -1,69 +1,36 @@
 ---
 name: AI Task
-description: Small, reviewable AI-assisted task
-title: "[AI Task]: "
-labels: ["ready-for-agent"]
-assignees: []
+about: Scoped task for AI agent implementation
+title: "[AI] "
+labels: ai-task
 ---
 
 ## Problem
 
-Describe the issue or improvement.
-
-## Scope
-
-This issue should change only:
-
-- [ ] one feature
-- [ ] one bug
-- [ ] one refactor
-- [ ] one documentation area
+<!-- What needs to change and why? -->
 
 ## Acceptance Criteria
 
-- [ ] 
-- [ ] 
-- [ ] 
+- [ ] TODO
 
-## Likely Files / Areas
+## Files Likely Touched
 
 ```text
 TODO
 ```
 
-## Test Expectations
+## Tests Required
 
-- [ ] Unit test
-- [ ] Integration test
-- [ ] Manual validation
-- [ ] Existing tests are sufficient because: TODO
+<!-- What behavior needs test coverage? -->
 
-## AI Workflow
+## Risks
 
-Use:
-
-```text
-/caveman full
-/tdd
-/diagnose
-```
-
-Rules:
-
-- Work on this issue only.
-- Do not redesign unrelated code.
-- Write or update tests first when practical.
-- Run available local checks.
-- Summarize changed files and commands run.
-
-## Risk Level
-
-- [ ] Low
-- [ ] Medium
-- [ ] High
+<!-- Known edge cases, regression risk, or architecture concerns. -->
 
 ## Rollback Plan
 
-```text
-Revert the PR. Add any project-specific rollback steps here.
-```
+<!-- How to revert if this breaks something. -->
+
+## Agent Notes
+
+<!-- Optional: context-mode queries to run, escalation triggers, known constraints. -->

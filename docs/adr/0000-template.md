@@ -1,41 +1,20 @@
-# ADR 0000: Title
+# ADR-0000: Title
 
-## Status
-
-Proposed | Accepted | Superseded | Deprecated
-
-## Date
-
-YYYY-MM-DD
+**Date:** YYYY-MM-DD
+**Status:** Proposed | Accepted | Deprecated | Superseded by ADR-XXXX
 
 ## Context
 
-What problem or decision forced this ADR?
+<!-- What situation or problem prompted this decision? -->
 
 ## Decision
 
-What did we decide?
+<!-- What was decided? Be specific. -->
 
 ## Consequences
 
-### Positive
-
-- TODO
-
-### Negative
-
-- TODO
-
-### Neutral / Tradeoffs
-
-- TODO
+<!-- What becomes easier or harder as a result? Any tradeoffs? -->
 
 ## Alternatives Considered
 
-| Option | Why Not Chosen |
-|---|---|
-| TODO | TODO |
-
-## AI Notes
-
-Agents must follow this ADR when changing related code.
+<!-- What other options were evaluated and why were they rejected? -->
