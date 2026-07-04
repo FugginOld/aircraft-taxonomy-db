@@ -16,98 +16,82 @@ logging.basicConfig(
 MAIN_DATABASE_NAME = "data/aircraft-taxonomy-db.csv"
 
 
-def contains_duplicate_ICAOs(df):
-    """Check if the database has any duplicate ICAO codes.
+def contains_duplicate_ICAOs(df) -> list[str]:
+    """Return a violation message if the database has any duplicate ICAO codes.
 
     Args:
         df (pandas.Dataframe): The database to check.
-
-    Raises:
-        Exception: When the database has duplicate ICAO codes.
     """
     duplicate_icao = df[df.duplicated(subset="$ICAO", keep=False)]["$ICAO"]
-    if len(duplicate_icao) > 0:
-        db_name = df.name if hasattr(df, "name") else "database"
-        logging.error(f"The {db_name} database has duplicate ICAO codes.")
-        sys.stdout.write(
-            f"The ' {db_name}' database has '{duplicate_icao.shape[0]}' duplicate "
-            f"ICAO codes:\n {duplicate_icao.to_string(index=False)}\n"
-        )
-        sys.exit(1)
+    if len(duplicate_icao) == 0:
+        return []
+    return [
+        f"has {duplicate_icao.shape[0]} duplicate ICAO codes:\n"
+        f"{duplicate_icao.to_string(index=False)}"
+    ]
 
 
-def contains_duplicate_regs(df):
-    """Check if the database has any duplicate registration numbers.
+def contains_duplicate_regs(df) -> list[str]:
+    """Return a violation message if the database has any duplicate registration numbers.
+
+    Not run by default: registration numbers are legitimately reused across
+    operators (military serial-number blocks, "????" placeholders for unknown
+    registrations, etc.), so duplicates here are not necessarily errors. Call
+    this explicitly if you want to inspect them.
 
     Args:
         df (pandas.Dataframe): The database to check.
-
-    Raises:
-        Exception: When the database has duplicate registration numbers.
     """
-
     duplicate_regs = df[df.duplicated(subset="$Registration", keep=False)][
         ["$ICAO", "$Registration"]
     ]
-    if len(duplicate_regs) > 0:
-        db_name = df.name if hasattr(df, "name") else "database"
-        logging.error(f"The '{db_name}' database has duplicate registration numbers.")
-        sys.stdout.write(
-            f"The '{db_name}' database has '{duplicate_regs.shape[0]}' duplicate "
-            f"registration numbers:\n{duplicate_regs.to_string(index=False)}\n"
-        )
-        sys.exit(1)
+    if len(duplicate_regs) == 0:
+        return []
+    return [
+        f"has {duplicate_regs.shape[0]} duplicate registration numbers:\n"
+        f"{duplicate_regs.to_string(index=False)}"
+    ]
 
 
-def contains_valid_ICAO_hexes(df):
-    """Check if all the values in the '$ICAO' data series are hexidecimal strings.
+def contains_valid_ICAO_hexes(df) -> list[str]:
+    """Return a violation message if any '$ICAO' value is not a hexadecimal string.
 
     Args:
-        df (pandas.Series): The '$ICAO' data series to check.
-
-    Raises:
-        Exception: When the data series has invalid hexidecimal values.
+        df (pandas.Dataframe): The database to check.
     """
     invalid_hexes = df[~df["$ICAO"].apply(is_hex).astype(bool)]["$ICAO"]
-    if len(invalid_hexes) > 0:
-        db_name = df.name if hasattr(df, "name") else "database"
-        error_strings = (
-            ["value", "is", "a hexidecimal"]
-            if invalid_hexes.shape[0] == 1
-            else ["values", "are", "hexidecimals"]
-        )
-        logging.error(
-            f"The '{db_name}' database contains non-hexidecimal '$ICAO' values."
-        )
-        sys.stdout.write(
-            f"The {db_name} database has '{invalid_hexes.shape[0]}' '$ICAO' "
-            f"{error_strings[0]} that {error_strings[1]} not {error_strings[2]}:\n"
-            f"{invalid_hexes.to_string(index=False)}\n"
-        )
-        sys.exit(1)
+    if len(invalid_hexes) == 0:
+        return []
+    noun = "value" if invalid_hexes.shape[0] == 1 else "values"
+    verb = "is" if invalid_hexes.shape[0] == 1 else "are"
+    return [
+        f"has {invalid_hexes.shape[0]} '$ICAO' {noun} that {verb} not hexadecimal:\n"
+        f"{invalid_hexes.to_string(index=False)}"
+    ]
 
 
-if __name__ == "__main__":
-    ##########################################
-    # Check main database.                   #
-    ##########################################
+def main() -> int:
     logging.info("Checking the main database...")
     try:
         main_df = pd.read_csv(MAIN_DATABASE_NAME)
-        main_df_db_name = MAIN_DATABASE_NAME
-    except Exception as e:
-        logging.error(f"The '{MAIN_DATABASE_NAME}' database is not a valid CSV.")
-        sys.stdout.write(
-            f"The '{MAIN_DATABASE_NAME}' database is not a valid CSV: {e}\n"
-        )
-        sys.exit(1)
+    except Exception as exc:
+        logging.error("The '%s' database is not a valid CSV.", MAIN_DATABASE_NAME)
+        sys.stdout.write(f"The '{MAIN_DATABASE_NAME}' database is not a valid CSV: {exc}\n")
+        return 1
 
-    # Preform database checks.
-    contains_duplicate_ICAOs(main_df)
-    contains_valid_ICAO_hexes(
-        main_df
-    )
-    # contains_duplicate_regs(
-    #     main_df
-    # )  # NOTE: This is commented out because there are duplicates.
+    violations = contains_duplicate_ICAOs(main_df) + contains_valid_ICAO_hexes(main_df)
+    # contains_duplicate_regs() is intentionally not run here - see its docstring.
+
+    if violations:
+        for violation in violations:
+            message = f"The '{MAIN_DATABASE_NAME}' database {violation}"
+            logging.error(message)
+            sys.stdout.write(message + "\n")
+        return 1
+
     logging.info("The main database is valid.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
