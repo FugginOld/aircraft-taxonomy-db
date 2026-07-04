@@ -7,27 +7,13 @@ import sys
 
 import pandas as pd
 
+from taxonomy_constants import is_hex
+
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s [%(name)s] %(message)s", level=logging.INFO
 )
 
 MAIN_DATABASE_NAME = "data/aircraft-taxonomy-db.csv"
-
-
-def is_hex(string):
-    """Check if a string is a hexidecimal string.
-
-    Args:
-        string (str): The string to check.
-
-    Returns:
-        boolean: True if the string is a hexidecimal string, False otherwise.
-    """
-    try:
-        int(string, 16)
-        return True
-    except ValueError:
-        return False
 
 
 def contains_duplicate_ICAOs(df):

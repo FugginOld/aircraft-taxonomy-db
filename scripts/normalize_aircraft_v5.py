@@ -7,7 +7,16 @@ import re
 import sys
 from typing import Dict, List, Optional, Tuple
 
-from taxonomy_constants import ALLOWED_CATEGORIES, VALID_TAG1, VALID_TAG2, VALID_TAG3, norm_ws
+from taxonomy_constants import (
+    ALLOWED_CATEGORIES,
+    LOOKUP_COLUMNS,
+    VALID_TAG1,
+    VALID_TAG2,
+    VALID_TAG3,
+    detect_delimiter,
+    norm_lookup_key,
+    norm_ws,
+)
 
 # ----------------------------
 # Scale-oriented normalizer
@@ -168,26 +177,11 @@ URL_RE = re.compile(r"^https?://", re.IGNORECASE)
 PHRASEY_RE = re.compile(r"[!?]|([A-Za-z]+\s+){4,}[A-Za-z]+")
 
 TAG_FIELDS = ("$Tag 1", "$#Tag 2", "$#Tag 3")
-REQUIRED_LOOKUP_COLUMNS = {
-    "match_key", "normalized_type", "category", "tag1", "tag2", "tag3"
-}
-
-
-def norm_key(value: str) -> str:
-    return norm_ws(value).casefold()
 
 
 def canonicalize_category(value: str) -> str:
     value = norm_ws(value)
     return CATEGORY_CANONICAL_MAP.get(value, value)
-
-
-def detect_delimiter(file_path: str) -> str:
-    with open(file_path, "r", encoding="utf-8-sig", newline="") as f:
-        sample = f.read(8192)
-    if "\t" in sample and sample.count("\t") >= sample.count(","):
-        return "\t"
-    return ","
 
 
 def get_output_paths(input_path: str) -> Tuple[str, str]:
@@ -202,11 +196,11 @@ def load_lookup(path: Optional[str]) -> Dict[str, Dict[str, str]]:
     delimiter = detect_delimiter(path)
     with open(path, "r", encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f, delimiter=delimiter)
-        missing = REQUIRED_LOOKUP_COLUMNS - set(reader.fieldnames or [])
+        missing = set(LOOKUP_COLUMNS) - set(reader.fieldnames or [])
         if missing:
             raise ValueError(f"Lookup file missing required columns: {sorted(missing)}")
         for row in reader:
-            key = norm_key(row.get("match_key", ""))
+            key = norm_lookup_key(row.get("match_key", ""))
             if key:
                 lookup[key] = {k: norm_ws(v) for k, v in row.items()}
     return lookup
@@ -220,8 +214,8 @@ def load_aliases(path: Optional[str]) -> Dict[str, str]:
     with open(path, "r", encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f, delimiter=delimiter)
         for row in reader:
-            raw = norm_key(row.get("raw_value", ""))
-            key = norm_key(row.get("match_key", ""))
+            raw = norm_lookup_key(row.get("raw_value", ""))
+            key = norm_lookup_key(row.get("match_key", ""))
             if raw and key:
                 aliases[raw] = key
     return aliases
@@ -277,8 +271,8 @@ def resolve_tag(original: str, lookup_value: str, allowed: set, field_name: str)
 
 
 def match_lookup(row: Dict[str, str], lookup: Dict[str, Dict[str, str]], aliases: Dict[str, str]) -> Tuple[Optional[Dict[str, str]], str, str]:
-    icao_type = norm_key(row.get("$ICAO Type", ""))
-    type_name = norm_key(row.get("$Type", ""))
+    icao_type = norm_lookup_key(row.get("$ICAO Type", ""))
+    type_name = norm_lookup_key(row.get("$Type", ""))
 
     if icao_type and icao_type in lookup:
         return lookup[icao_type], "icao_type", icao_type
@@ -300,8 +294,8 @@ def match_lookup(row: Dict[str, str], lookup: Dict[str, Dict[str, str]], aliases
 
 
 def infer_mission_override(row: Dict[str, str]) -> str:
-    operator = norm_key(row.get("$Operator", ""))
-    type_name = norm_key(row.get("$Type", ""))
+    operator = norm_lookup_key(row.get("$Operator", ""))
+    type_name = norm_lookup_key(row.get("$Type", ""))
 
     if any(x in operator for x in ("aeromedical", "air ambulance", "medical", "medevac", "rescue")):
         return "Air Ambulance"

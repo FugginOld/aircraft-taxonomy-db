@@ -12,31 +12,29 @@ import csv
 import logging
 from pathlib import Path
 
+from taxonomy_constants import LOOKUP_COLUMNS, detect_delimiter, norm_lookup_key
+
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s [%(name)s] %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
-REQUIRED = ["match_key", "normalized_type", "category", "tag1", "tag2", "tag3"]
-
 
 def load_rows(path: Path) -> dict[str, dict[str, str]]:
     if not path.exists():
         return {}
+    delim = detect_delimiter(path)
     with path.open("r", encoding="utf-8-sig", newline="") as f:
-        sample = f.read(4096)
-        f.seek(0)
-        delim = "\t" if sample.count("\t") > sample.count(",") else ","
         reader = csv.DictReader(f, delimiter=delim)
         return {
-            (row.get("match_key") or "").strip().casefold(): {c: (row.get(c) or "").strip() for c in REQUIRED}
+            norm_lookup_key(row.get("match_key") or ""): {c: (row.get(c) or "").strip() for c in LOOKUP_COLUMNS}
             for row in reader if (row.get("match_key") or "").strip()
         }
 
 
 def write_rows(path: Path, rows: dict[str, dict[str, str]]) -> None:
     with path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=REQUIRED)
+        writer = csv.DictWriter(f, fieldnames=LOOKUP_COLUMNS)
         writer.writeheader()
         for _, row in sorted(rows.items(), key=lambda kv: kv[1]["match_key"].casefold()):
             writer.writerow(row)

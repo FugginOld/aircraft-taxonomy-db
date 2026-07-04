@@ -26,24 +26,12 @@ import shutil
 import sys
 from pathlib import Path
 
+from taxonomy_constants import DB_COLUMNS
+
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s [%(name)s] %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
-
-# Column order for the main and custom databases
-DB_COLUMNS = [
-    "$ICAO",
-    "$Registration",
-    "$Operator",
-    "$Type",
-    "$ICAO Type",
-    "#CMPG",
-    "$Tag 1",
-    "$#Tag 2",
-    "$#Tag 3",
-    "Category",
-]
 
 
 def _add_scripts_to_path() -> None:

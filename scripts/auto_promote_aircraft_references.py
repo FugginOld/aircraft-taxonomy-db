@@ -19,30 +19,18 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import re
 from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
 
-from taxonomy_constants import norm_ws
-
-MATCHKEY_RE = re.compile(r"^[A-Z0-9]{2,5}$")
-LOOKUP_FIELDS = ["match_key", "normalized_type", "category", "tag1", "tag2", "tag3"]
-ALIAS_FIELDS = ["raw_value", "match_key"]
-
-def norm_key(value: str) -> str:
-    return norm_ws(value).upper()
+from taxonomy_constants import ALIAS_COLUMNS, LOOKUP_COLUMNS, MATCHKEY_RE, detect_delimiter, norm_match_key, norm_ws
 
 def norm_alias(value: str) -> str:
     return norm_ws(value).casefold()
 
-def sniff_delimiter(path: Path) -> str:
-    text = path.read_text(encoding="utf-8-sig", errors="ignore")[:8192]
-    return "\t" if text.count("\t") > text.count(",") else ","
-
 def read_csv(path: Path) -> list[dict]:
     if not path.exists():
         return []
-    delim = sniff_delimiter(path)
+    delim = detect_delimiter(path)
     with path.open("r", encoding="utf-8-sig", newline="") as f:
         return list(csv.DictReader(f, delimiter=delim))
 
@@ -57,7 +45,7 @@ def load_lookup_map(path: Path) -> Dict[str, dict]:
     rows = read_csv(path)
     out = {}
     for row in rows:
-        key = norm_key(row.get("match_key", ""))
+        key = norm_match_key(row.get("match_key", ""))
         if key:
             clean = {k: norm_ws(row.get(k, "")) for k in row.keys()}
             clean["match_key"] = key
@@ -69,7 +57,7 @@ def load_alias_map(path: Path) -> Dict[Tuple[str, str], dict]:
     out = {}
     for row in rows:
         raw = norm_alias(row.get("raw_value", ""))
-        key = norm_key(row.get("match_key", ""))
+        key = norm_match_key(row.get("match_key", ""))
         if raw and key:
             clean = {k: norm_ws(row.get(k, "")) for k in row.keys()}
             clean["raw_value"] = raw
@@ -80,7 +68,7 @@ def load_alias_map(path: Path) -> Dict[Tuple[str, str], dict]:
 def lookup_confidence(row: dict) -> Tuple[float, list[str]]:
     score = 0.0
     reasons = []
-    match_key = norm_key(row.get("match_key", ""))
+    match_key = norm_match_key(row.get("match_key", ""))
     if MATCHKEY_RE.match(match_key):
         score += 0.20
         reasons.append("valid_match_key")
@@ -121,7 +109,7 @@ def alias_confidence(row: dict) -> Tuple[float, list[str]]:
     score = 0.0
     reasons = []
     raw = norm_alias(row.get("raw_value", ""))
-    match_key = norm_key(row.get("match_key", ""))
+    match_key = norm_match_key(row.get("match_key", ""))
     if raw:
         score += 0.10
         reasons.append("has_alias")
@@ -162,7 +150,7 @@ def merge_lookup(existing: Dict[str, dict], reviewed: list[dict], threshold: flo
     skipped = []
     merged = dict(existing)
     for row in reviewed:
-        key = norm_key(row.get("match_key", ""))
+        key = norm_match_key(row.get("match_key", ""))
         if not key:
             skipped.append({**row, "promotion_reason": "missing_match_key"})
             continue
@@ -202,7 +190,7 @@ def merge_aliases(existing: Dict[Tuple[str, str], dict], reviewed: list[dict], t
     merged = dict(existing)
     for row in reviewed:
         raw = norm_alias(row.get("raw_value", ""))
-        key = norm_key(row.get("match_key", ""))
+        key = norm_match_key(row.get("match_key", ""))
         pair = (raw, key)
         if not raw or not key:
             skipped.append({**row, "promotion_reason": "missing_alias_or_match_key"})
@@ -251,7 +239,7 @@ def main() -> int:
     lookup_final, lookup_promoted, lookup_skipped = merge_lookup(existing_lookup, lookup_review, args.lookup_threshold)
     alias_final, alias_promoted, alias_skipped = merge_aliases(existing_aliases, aliases_review, args.alias_threshold)
 
-    write_csv(outdir / "aircraft_type_lookup_promoted.csv", LOOKUP_FIELDS, lookup_final)
+    write_csv(outdir / "aircraft_type_lookup_promoted.csv", LOOKUP_COLUMNS, lookup_final)
     write_csv(outdir / "aircraft_type_lookup_promoted_candidates.csv",
               ["match_key", "normalized_type", "category", "tag1", "tag2", "tag3", "promotion_confidence", "promotion_reasons"],
               lookup_promoted)
@@ -263,7 +251,7 @@ def main() -> int:
               ["raw_value", "match_key", "promotion_confidence", "promotion_reasons"],
               alias_promoted)
     write_csv(outdir / "aircraft_type_aliases_promoted_for_normalizer.csv",
-              ALIAS_FIELDS,
+              ALIAS_COLUMNS,
               alias_final)
     write_csv(outdir / "aircraft_type_aliases_promotion_skipped.csv",
               ["raw_value", "match_key", "promotion_confidence", "promotion_reasons", "promotion_reason"],

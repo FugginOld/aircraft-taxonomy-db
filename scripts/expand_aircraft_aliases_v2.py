@@ -35,6 +35,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Set, Tuple
 
+from taxonomy_constants import MATCHKEY_RE, detect_delimiter, norm_ws
+
 AMBIGUOUS_TERMS: Set[str] = {
     "jayhawk",
     "merlin",
@@ -74,15 +76,11 @@ PUBLIC_MODEL_COLUMNS = (
     "description", "name", "model_name"
 )
 
-MATCHKEY_RE = re.compile(r"^[A-Z0-9]{2,5}$")
 WHITESPACE_RE = re.compile(r"\s+")
 PUNCT_RE = re.compile(r"[/_,.;:]+")
 HYPHEN_VARIANTS_RE = re.compile(r"[-‐‑‒–—]+")
 MULTISPACE_DASH_RE = re.compile(r"\s*-\s*")
 NON_ALIAS_CHARS_RE = re.compile(r"[^a-z0-9 +\-]+")
-
-def norm_space(s: str) -> str:
-    return WHITESPACE_RE.sub(" ", (s or "").strip())
 
 def canonical_alias(s: str) -> str:
     s = (s or "").strip().lower()
@@ -95,15 +93,6 @@ def canonical_alias(s: str) -> str:
 
 def looks_like_matchkey(value: str) -> bool:
     return bool(MATCHKEY_RE.match((value or "").strip().upper()))
-
-def detect_delimiter(path: Path) -> str:
-    with path.open("r", encoding="utf-8-sig", newline="") as f:
-        sample = f.read(4096)
-    if "\t" in sample and sample.count("\t") >= sample.count(","):
-        return "\t"
-    if ";" in sample and sample.count(";") > sample.count(","):
-        return ";"
-    return ","
 
 def generate_safe_variants(raw: str) -> Set[str]:
     raw = canonical_alias(raw)
@@ -168,7 +157,7 @@ def read_seed_aliases(path: Path) -> List[Dict[str, str]]:
             raise ValueError("Seed alias file must have columns: raw_value,match_key")
         rows: List[Dict[str, str]] = []
         for row in reader:
-            raw = norm_space(row.get("raw_value", ""))
+            raw = norm_ws(row.get("raw_value", ""))
             key = (row.get("match_key", "") or "").strip().upper()
             if raw and key:
                 rows.append({"raw_value": raw, "match_key": key})
@@ -202,7 +191,7 @@ def read_public_metadata(paths: Sequence[Path]) -> List[Tuple[str, str, str]]:
                     continue
                 for row in reader:
                     mk = (row.get(mk_col, "") or "").strip().upper()
-                    model = norm_space(row.get(model_col, ""))
+                    model = norm_ws(row.get(model_col, ""))
                     if not mk or not model or not looks_like_matchkey(mk):
                         continue
                     out.append((model, mk, path.name))

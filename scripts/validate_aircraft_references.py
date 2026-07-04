@@ -26,16 +26,12 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
-from taxonomy_constants import norm_ws
+from taxonomy_constants import ALIAS_COLUMNS, LOOKUP_COLUMNS, MATCHKEY_RE, detect_delimiter, norm_match_key, norm_ws
 
-MATCHKEY_RE = re.compile(r"^[A-Z0-9]{2,5}$")
 WS_RE = re.compile(r"\s+")
 HYPHEN_RE = re.compile(r"[-‐‑‒–—]+")
 PUNCT_RE = re.compile(r"[/_,.;:]+")
 NON_ALIAS_CHARS_RE = re.compile(r"[^a-z0-9 +\-]+")
-
-LOOKUP_REQUIRED = {"match_key", "normalized_type", "category", "tag1", "tag2", "tag3"}
-ALIAS_REQUIRED = {"raw_value", "match_key"}
 
 PUBLIC_MATCHKEY_COLUMNS = (
     "typecode", "icao_type", "aircraft_type", "designator", "match_key", "icao", "aircrafttype"
@@ -44,9 +40,6 @@ PUBLIC_MODEL_COLUMNS = (
     "model", "manufacturername", "manufacturer_name", "type", "aircraft_model",
     "description", "name", "model_name", "aircraft", "model_full"
 )
-
-def norm_matchkey(value: str) -> str:
-    return norm_ws(value).upper()
 
 def canonical_alias(value: str) -> str:
     s = (value or "").strip().lower()
@@ -57,40 +50,34 @@ def canonical_alias(value: str) -> str:
     return s
 
 def looks_like_matchkey(value: str) -> bool:
-    return bool(MATCHKEY_RE.match(norm_matchkey(value)))
-
-def sniff_delimiter(path: Path) -> str:
-    sample = path.read_text(encoding="utf-8-sig", errors="ignore")[:8192]
-    if sample.count("\t") > sample.count(","):
-        return "\t"
-    return ","
+    return bool(MATCHKEY_RE.match(norm_match_key(value)))
 
 def read_lookup(path: Path) -> Dict[str, Dict[str, str]]:
-    delim = sniff_delimiter(path)
+    delim = detect_delimiter(path)
     with path.open("r", encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f, delimiter=delim)
-        missing = LOOKUP_REQUIRED - set(reader.fieldnames or [])
+        missing = set(LOOKUP_COLUMNS) - set(reader.fieldnames or [])
         if missing:
             raise ValueError(f"Lookup missing required columns: {sorted(missing)}")
         out = {}
         for row in reader:
-            key = norm_matchkey(row.get("match_key", ""))
+            key = norm_match_key(row.get("match_key", ""))
             if key:
                 out[key] = {k: norm_ws(v) for k, v in row.items()}
                 out[key]["match_key"] = key
         return out
 
 def read_aliases(path: Path) -> Dict[Tuple[str, str], Dict[str, str]]:
-    delim = sniff_delimiter(path)
+    delim = detect_delimiter(path)
     with path.open("r", encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f, delimiter=delim)
-        missing = ALIAS_REQUIRED - set(reader.fieldnames or [])
+        missing = set(ALIAS_COLUMNS) - set(reader.fieldnames or [])
         if missing:
             raise ValueError(f"Aliases missing required columns: {sorted(missing)}")
         out = {}
         for row in reader:
             raw = canonical_alias(row.get("raw_value", ""))
-            key = norm_matchkey(row.get("match_key", ""))
+            key = norm_match_key(row.get("match_key", ""))
             if raw and key:
                 out[(raw, key)] = {"raw_value": raw, "match_key": key}
         return out
@@ -108,7 +95,7 @@ def iter_public_rows(paths: Sequence[Path]) -> Iterable[Tuple[str, str, str]]:
     for path in paths:
         if not path.exists() or path.suffix.lower() not in {".csv", ".tsv"}:
             continue
-        delim = sniff_delimiter(path)
+        delim = detect_delimiter(path)
         with path.open("r", encoding="utf-8-sig", newline="") as f:
             reader = csv.DictReader(f, delimiter=delim)
             if not reader.fieldnames:
@@ -117,7 +104,7 @@ def iter_public_rows(paths: Sequence[Path]) -> Iterable[Tuple[str, str, str]]:
             if not mk_col or not model_col:
                 continue
             for row in reader:
-                mk = norm_matchkey(row.get(mk_col, ""))
+                mk = norm_match_key(row.get(mk_col, ""))
                 model = norm_ws(row.get(model_col, ""))
                 if mk and model:
                     yield mk, model, path.name
