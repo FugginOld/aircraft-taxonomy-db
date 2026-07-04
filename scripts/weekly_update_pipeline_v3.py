@@ -57,6 +57,20 @@ def run(cmd: list[str], cwd: Optional[Path] = None) -> None:
     logger.info("+ %s", " ".join(cmd))
     subprocess.run(cmd, cwd=str(cwd) if cwd else None, check=True)
 
+def _normalizer_output_paths(plane_file: Path) -> tuple[Path, Path]:
+    """Return the (normalized, review) paths normalize_aircraft_v5.py writes for plane_file.
+
+    Imports the real get_output_paths() instead of re-deriving the _normalized/
+    _review suffix convention here, so the two can't silently drift apart.
+    """
+    scripts_dir = str(Path(__file__).parent.resolve())
+    if scripts_dir not in sys.path:
+        sys.path.insert(0, scripts_dir)
+    from normalize_aircraft_v5 import get_output_paths  # noqa: PLC0415
+
+    normalized, review = get_output_paths(str(plane_file))
+    return Path(normalized), Path(review)
+
 def main() -> int:
     p = argparse.ArgumentParser(description="Weekly aircraft update pipeline with validation and auto-promotion")
     p.add_argument("--workspace", default=".")
@@ -97,10 +111,6 @@ def main() -> int:
     if public_csvs:
         expand_cmd += ["--public-metadata", *[str(p) for p in public_csvs]]
     run(expand_cmd, cwd=ws)
-
-    verified_expanded = outdir / f"{Path(args.seed_aliases).stem}_verified_expanded_for_normalizer.csv"
-    if not verified_expanded.exists():
-        verified_expanded = outdir / "aircraft_type_aliases_verified_expanded_for_normalizer.csv"
 
     validate_cmd = [
         sys.executable, str(ws / args.validator),
@@ -156,8 +166,7 @@ def main() -> int:
                 cmd.append("--no-audit-cols")
             run(cmd, cwd=ws)
 
-            normalized = plane_file.with_name(plane_file.stem + "_normalized" + plane_file.suffix)
-            review = plane_file.with_name(plane_file.stem + "_review" + plane_file.suffix)
+            normalized, review = _normalizer_output_paths(plane_file)
             if normalized.exists():
                 backup_if_exists(plane_file)
                 shutil.move(str(normalized), str(plane_file))
