@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v6.2.0
+      - uses: actions/setup-python@v6.3.0
         with:
           python-version: "3.10"
           cache: "pip"
@@ -62,7 +62,7 @@ jobs:
 
       - name: Commit import results
         if: ${{ steps.check.outputs.row_count > 0 }}
-        uses: stefanzweifel/git-auto-commit-action@v7.1.0
+        uses: stefanzweifel/git-auto-commit-action@v7.2.0
         with:
           commit_message: "feat: import custom aircraft submissions"
           file_pattern: |
