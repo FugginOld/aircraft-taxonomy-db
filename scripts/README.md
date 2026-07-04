@@ -40,9 +40,8 @@ All scripts assume they are run from the **repository root** (not from inside `s
 | `normalize_aircraft_v5.py` | Core normaliser. Maps each aircraft's `$ICAO Type` / `$Type` field to the canonical taxonomy. |
 | `expand_aircraft_aliases_v2.py` | Expands the alias seed against public metadata to produce a broader alias set. |
 | `validate_aircraft_references.py` | Scores lookup / alias rows against cached public metadata. Produces review queues. |
-| `auto_promote_aircraft_references.py` | Promotes high-confidence review rows into the canonical lookup / aliases. |
+| `auto_promote_aircraft_references.py` | Promotes high-confidence review rows into the canonical lookup / aliases. `--manual-lookup` also merges a hand-reviewed lookup CSV in without scoring. |
 | `sync_public_aircraft_sources.py` | Downloads fresh public aircraft reference data into `cache/public_sources/`. |
-| `promote_reviewed_lookup_rows.py` | Merges a manually reviewed lookup CSV into `taxonomy/aircraft_type_lookup.csv`. |
 | `weekly_update_pipeline_v3.py` | Orchestrates the full weekly flow: sync → expand → validate → promote → publish → normalise. |
 
 ---

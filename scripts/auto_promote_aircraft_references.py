@@ -217,24 +217,31 @@ def merge_aliases(existing: Dict[Tuple[str, str], dict], reviewed: list[dict], t
         })
     return final_rows, promoted, skipped
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="Auto-promote reviewed aircraft lookup/alias rows with confidence scoring")
     p.add_argument("--lookup-existing", required=True, help="Current canonical lookup CSV/TSV")
     p.add_argument("--aliases-existing", required=True, help="Current canonical aliases CSV/TSV")
-    p.add_argument("--lookup-review", required=True, help="Lookup review CSV/TSV")
-    p.add_argument("--aliases-review", required=True, help="Alias review CSV/TSV")
+    p.add_argument("--lookup-review", help="Lookup review CSV/TSV")
+    p.add_argument("--aliases-review", help="Alias review CSV/TSV")
+    p.add_argument("--manual-lookup", help="Manually reviewed lookup CSV/TSV to merge in without confidence scoring (overwrites existing rows by match_key)")
     p.add_argument("--lookup-threshold", type=float, default=0.70)
     p.add_argument("--alias-threshold", type=float, default=0.75)
     p.add_argument("--output-dir", default=".")
-    args = p.parse_args()
+    args = p.parse_args(argv)
 
     outdir = Path(args.output_dir)
     outdir.mkdir(parents=True, exist_ok=True)
 
     existing_lookup = load_lookup_map(Path(args.lookup_existing))
     existing_aliases = load_alias_map(Path(args.aliases_existing))
-    lookup_review = read_csv(Path(args.lookup_review))
-    aliases_review = read_csv(Path(args.aliases_review))
+    lookup_review = read_csv(Path(args.lookup_review)) if args.lookup_review else []
+    aliases_review = read_csv(Path(args.aliases_review)) if args.aliases_review else []
+
+    manual_lookup_rows = 0
+    if args.manual_lookup:
+        manual_lookup = load_lookup_map(Path(args.manual_lookup))
+        existing_lookup.update(manual_lookup)
+        manual_lookup_rows = len(manual_lookup)
 
     lookup_final, lookup_promoted, lookup_skipped = merge_lookup(existing_lookup, lookup_review, args.lookup_threshold)
     alias_final, alias_promoted, alias_skipped = merge_aliases(existing_aliases, aliases_review, args.alias_threshold)
@@ -259,6 +266,7 @@ def main() -> int:
 
     report = {
         "lookup_existing": len(existing_lookup),
+        "manual_lookup_rows": manual_lookup_rows,
         "lookup_review_rows": len(lookup_review),
         "lookup_promoted": len(lookup_promoted),
         "lookup_skipped": len(lookup_skipped),

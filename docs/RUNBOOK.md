@@ -191,9 +191,17 @@ Review `data/aircraft-taxonomy-db_review.csv` for rows the normaliser could not 
 
 ### Promoting reviewed rows manually
 
+Use `--manual-lookup` to merge a hand-reviewed lookup CSV straight into the
+canonical lookup, bypassing confidence scoring (a manual override entry
+overwrites any existing row with the same `match_key`):
+
 ```bash
-python scripts/promote_reviewed_lookup_rows.py path/to/reviewed_lookup.csv \
-    --target taxonomy/aircraft_type_lookup.csv
+python scripts/auto_promote_aircraft_references.py \
+    --lookup-existing taxonomy/aircraft_type_lookup.csv \
+    --aliases-existing taxonomy/aircraft_type_aliases.csv \
+    --manual-lookup path/to/reviewed_lookup.csv \
+    --output-dir build/manual_promotion
+cp build/manual_promotion/aircraft_type_lookup_promoted.csv taxonomy/aircraft_type_lookup.csv
 ```
 
 ---

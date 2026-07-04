@@ -1,5 +1,6 @@
 import csv
 import importlib.util
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -124,6 +125,48 @@ class TestAutoPromoteAircraftReferences(unittest.TestCase):
         self.assertIn("A320", lookup)
         self.assertEqual(lookup["A320"]["normalized_type"], "Airbus A320")
         self.assertIn(("airbus a320", "A320"), aliases)
+
+    def write_lookup_csv(self, path: Path, rows: list[dict]) -> None:
+        with path.open("w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=["match_key", "normalized_type", "category", "tag1", "tag2", "tag3"])
+            writer.writeheader()
+            for row in rows:
+                writer.writerow(row)
+
+    def test_manual_lookup_overwrites_existing_row_without_scoring(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            existing = tmp_path / "lookup_existing.csv"
+            manual = tmp_path / "lookup_manual.csv"
+            aliases_existing = tmp_path / "aliases_existing.csv"
+            outdir = tmp_path / "out"
+
+            self.write_lookup_csv(existing, [
+                {"match_key": "A320", "normalized_type": "Airbus A320", "category": "Trainer", "tag1": "", "tag2": "", "tag3": ""},
+            ])
+            # A human-reviewed correction: same match_key, corrected category.
+            # No validation_status/reason fields at all — this must bypass confidence scoring entirely.
+            self.write_lookup_csv(manual, [
+                {"match_key": "a320", "normalized_type": "Airbus A320", "category": "Passenger - Narrowbody", "tag1": "", "tag2": "", "tag3": ""},
+            ])
+            with aliases_existing.open("w", encoding="utf-8", newline="") as f:
+                csv.DictWriter(f, fieldnames=["raw_value", "match_key"]).writeheader()
+
+            result = self.mod.main([
+                "--lookup-existing", str(existing),
+                "--aliases-existing", str(aliases_existing),
+                "--manual-lookup", str(manual),
+                "--output-dir", str(outdir),
+            ])
+            self.assertEqual(result, 0)
+
+            with (outdir / "aircraft_type_lookup_promoted.csv").open(encoding="utf-8", newline="") as f:
+                rows = {row["match_key"]: row for row in csv.DictReader(f)}
+            self.assertEqual(rows["A320"]["category"], "Passenger - Narrowbody")
+
+            report = json.loads((outdir / "aircraft_promotion_report.json").read_text(encoding="utf-8"))
+            self.assertEqual(report["manual_lookup_rows"], 1)
+            self.assertEqual(report["lookup_review_rows"], 0)
 
 
 if __name__ == "__main__":
