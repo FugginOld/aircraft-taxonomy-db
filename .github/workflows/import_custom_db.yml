@@ -62,7 +62,7 @@ jobs:
 
       - name: Commit import results
         if: ${{ steps.check.outputs.row_count > 0 }}
-        uses: stefanzweifel/git-auto-commit-action@v7.1.0
+        uses: stefanzweifel/git-auto-commit-action@v7.2.0
         with:
           commit_message: "feat: import custom aircraft submissions"
           file_pattern: |
