@@ -23,13 +23,11 @@ import re
 from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
 
-WS_RE = re.compile(r"\s+")
+from taxonomy_constants import norm_ws
+
 MATCHKEY_RE = re.compile(r"^[A-Z0-9]{2,5}$")
 LOOKUP_FIELDS = ["match_key", "normalized_type", "category", "tag1", "tag2", "tag3"]
 ALIAS_FIELDS = ["raw_value", "match_key"]
-
-def norm_ws(value: str) -> str:
-    return WS_RE.sub(" ", (value or "").strip())
 
 def norm_key(value: str) -> str:
     return norm_ws(value).upper()

@@ -7,7 +7,7 @@ import re
 import sys
 from typing import Dict, List, Optional, Tuple
 
-from taxonomy_constants import ALLOWED_CATEGORIES, VALID_TAG1, VALID_TAG2, VALID_TAG3
+from taxonomy_constants import ALLOWED_CATEGORIES, VALID_TAG1, VALID_TAG2, VALID_TAG3, norm_ws
 
 # ----------------------------
 # Scale-oriented normalizer
@@ -171,10 +171,6 @@ TAG_FIELDS = ("$Tag 1", "$#Tag 2", "$#Tag 3")
 REQUIRED_LOOKUP_COLUMNS = {
     "match_key", "normalized_type", "category", "tag1", "tag2", "tag3"
 }
-
-
-def norm_ws(value: str) -> str:
-    return re.sub(r"\s+", " ", (value or "").strip())
 
 
 def norm_key(value: str) -> str:

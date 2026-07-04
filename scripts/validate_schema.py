@@ -26,7 +26,7 @@ import sys
 from pathlib import Path
 from typing import List, Sequence
 
-from taxonomy_constants import ALLOWED_CATEGORIES
+from taxonomy_constants import ALLOWED_CATEGORIES, norm_ws
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s [%(name)s] %(message)s", level=logging.INFO
@@ -38,11 +38,6 @@ ALIAS_REQUIRED = {"raw_value", "match_key"}
 DATA_REQUIRED = {"$ICAO", "$Registration", "$Operator", "$Type", "$ICAO Type", "#CMPG", "Category"}
 
 MATCHKEY_RE = re.compile(r"^[A-Z0-9]{2,5}$")  # ICAO type designator: 2–5 uppercase alphanumeric chars
-WS_RE = re.compile(r"\s+")
-
-
-def norm_ws(value: str) -> str:
-    return WS_RE.sub(" ", (value or "").strip())
 
 
 def sniff_delimiter(path: Path) -> str:

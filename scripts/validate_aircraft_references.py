@@ -26,6 +26,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
+from taxonomy_constants import norm_ws
+
 MATCHKEY_RE = re.compile(r"^[A-Z0-9]{2,5}$")
 WS_RE = re.compile(r"\s+")
 HYPHEN_RE = re.compile(r"[-‐‑‒–—]+")
@@ -42,9 +44,6 @@ PUBLIC_MODEL_COLUMNS = (
     "model", "manufacturername", "manufacturer_name", "type", "aircraft_model",
     "description", "name", "model_name", "aircraft", "model_full"
 )
-
-def norm_ws(value: str) -> str:
-    return WS_RE.sub(" ", (value or "").strip())
 
 def norm_matchkey(value: str) -> str:
     return norm_ws(value).upper()

@@ -1,5 +1,15 @@
 """Single source of truth for allowed taxonomy values shared across pipeline scripts."""
 
+import re
+
+_WS_RE = re.compile(r"\s+")
+
+
+def norm_ws(value: str) -> str:
+    """Collapse whitespace runs to a single space and strip the ends."""
+    return _WS_RE.sub(" ", (value or "").strip())
+
+
 ALLOWED_CATEGORIES = {
     "AEW&C",
     "Attack / Strike",
