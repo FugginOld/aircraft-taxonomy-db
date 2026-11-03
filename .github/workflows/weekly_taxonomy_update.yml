@@ -80,7 +80,7 @@ jobs:
             --data-files data/aircraft-taxonomy-db.csv data/aircraft-taxonomy-pia.csv
 
       - name: Upload weekly update build artifacts
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: weekly-update-artifacts
           path: build/weekly_update/
